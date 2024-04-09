@@ -37,7 +37,7 @@ app.post('/createuser', (req, res) => {
           let userData = JSON.parse(user)
           userData = userData.user
           Auth.insertUserData(userData).then(() => {
-            res.redirect('/dashboard')
+            res.redirect('/index')
           })
        }else{
           return user.err
@@ -50,17 +50,17 @@ app.post('/login', (req, res) => {
     Auth.SignInWithEmailAndPassword(getBody.email, getBody.password)
     .then((login) => {
         if(!login.err){
-            res.redirect('/dashboard')
+            res.redirect('/index')
         }else{
             res.redirect('/')
         }
     })
 })
 
-app.get('/dashboard', function(req, res){
+app.get('/index', function(req, res){
     if(userLogged){
         Auth.GetData().then((data) => {
-            res.render('dashboard', {data});
+            res.render('index', {data});
         })
     }else{
         res.redirect('/')
