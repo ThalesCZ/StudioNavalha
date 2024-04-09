@@ -1,6 +1,6 @@
-const firebase = require("firebase");
+const firebase = require('firebase');
 
-const config = {
+var config = {
     apiKey: process.env.API_KEY,
     authDomain: process.env.AUTH_DOMAIN,
     databaseURL: process.env.DATABASE_URL,
@@ -17,7 +17,6 @@ module.exports.SignUpWithEmailAndPassword = (email, password) => {
         return JSON.stringify(user)
     })
     .catch(function(error) {
-        // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         if (errorCode == 'auth/weak-password') {
@@ -32,7 +31,6 @@ module.exports.SignUpWithEmailAndPassword = (email, password) => {
 module.exports.SignInWithEmailAndPassword = (email, password) => {
     return firebase.auth().signInWithEmailAndPassword(email, password)
            .catch(function(error) {
-             // Handle Errors here.
              var errorCode = error.code;
              var errorMessage = error.message;
              if (errorCode === 'auth/wrong-password') {
@@ -43,5 +41,28 @@ module.exports.SignInWithEmailAndPassword = (email, password) => {
              return {err: error}
            });
    }
+
+   module.exports.GetData = () => {
+     let data = []
+    return firebase.database().ref('users').once('value')
+    .then((snapshot) => {
+      
+      snapshot.forEach((childSnapshot)=>{
+        data.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val() 
+        })
+      })
+      console.log(data)
+      return data;
+    })
+  }
+
+  module.exports.insertUserData = (userData) => {
+    return firebase.database().ref('users/' + userData.uid).set({
+        email: userData.email,
+    });
+};
+
 
 return module.exports
