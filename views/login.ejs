@@ -5,6 +5,9 @@
         <div class="signup">
             <form action="/createuser" method="POST" id="signupForm">
                 <label for="chk" aria-hidden="true">Sign up</label>
+                <% if (signUpError) { %>
+                    <p class="error-message"><%= signUpError %></p>
+                <% } %>
                 <input type="text" name="username" placeholder="User name">
                 <input type="email" name="email" placeholder="Email" id="exampleInputEmail1" required="">
                 <input type="password" name="password" placeholder="Password" id="exampleInputPassword1" required="">
@@ -15,6 +18,9 @@
         <div class="login">
             <form action="/login" method="POST" id="loginForm">
                 <label for="chk" aria-hidden="true">Login</label>
+                <% if (loginError) { %>
+                    <p class="error-message"><%= loginError %></p>
+                <% } %>
                 <input type="email" name="email" placeholder="Email" required="">
                 <input type="password" name="password" placeholder="Password" id="exampleInputPassword1" required="">
                 <button type="submit">Login</button>
