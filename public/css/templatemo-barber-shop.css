@@ -11,15 +11,15 @@ https://templatemo.com/tm-585-barber-shop
   CUSTOM PROPERTIES ( VARIABLES )             
 -----------------------------------------*/
 :root {
-  --white-color:                  #ffffff;
-  --primary-color:                #505151;
+  --white-color:                  #fff5f5;
+  --primary-color:                #000000;
   --secondary-color:              #34dc0a;
-  --section-bg-color:             #f0f8ff;
+  --section-bg-color:             #2a353f;
   --custom-btn-bg-color:          #323737;
-  --custom-btn-bg-hover-color:    #000000;
-  --dark-color:                   #000000;
+  --custom-btn-bg-hover-color:    #606060;
+  --dark-color:                   #9c9c9c;
   --p-color:                      #646871;
-  --border-color:                 #7fffd4;
+  --border-color:                 #000000;
   --link-hover-color:             #6c6f74;
 
   --body-font-family:             'Unbounded', cursive;
@@ -254,9 +254,15 @@ strong {
 }
 
 .logo-image {
-  width: 154px;
+  width: 260px;
   height: auto;
-  margin-bottom: 70px;
+  margin-left: 1.5%;
+  position:relative;
+ width: 80%;
+   
+  
+  
+
 }
 
 #sidebarMenu .nav-link {
@@ -351,9 +357,9 @@ strong {
   HERO        
 -----------------------------------------*/
 .hero-section {
-  background-image: url('../images/client-doing-hair-cut-barber-shop-salon.jpg');
+  background-image: url('../images/salão.png');
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment:inherit;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -372,7 +378,8 @@ strong {
 
 .hero-section::after {
   content: "";
-  background: linear-gradient(90deg, #FDBB2D 0%, #22C1C3 100%);
+  background-color: #000000;
+  opacity: 20%;
   position: absolute;
   top: 0;
   right: 0;
@@ -527,13 +534,19 @@ strong {
   color: var(--white-color);
 }
 
-.services-info:hover{
-  color: #000000;
+
+.services-thumb:hover .services-info h4 {
+  color: rgba(255, 255, 255, 0.815);
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000; 
 }
 
+
 .services_text:hover{
-    letter-spacing: 5px;
-    color: rgba(117, 36, 36, 0.599);
+    letter-spacing: 3px;
 }
 
 
@@ -848,4 +861,5 @@ strong {
     padding: 35px;
   }
 }
+
 
