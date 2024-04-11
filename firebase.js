@@ -12,35 +12,38 @@ var config = {
 firebase.initializeApp(config);
 
 module.exports.SignUpWithEmailAndPassword = (email, password) => {
-    return firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((user) => {
-        return JSON.stringify(user)
-    })
-    .catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorCode == 'auth/weak-password') {
-            return {err: 'The password is too weak.'}
-        } else {
-          return {err: errorMessage }
-        }
-        return {err: error}
-    });
+  return firebase.auth().createUserWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+      return JSON.stringify(userCredential.user); 
+  })
+  .catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode == 'auth/weak-password') {
+          return {err: 'auth/weak-password'};
+      } 
+      else if (errorCode = 'auth/email-already-in-use'){
+        return {err: 'auth/email-already-in-use'}
+      }
+      else {
+          return {err: errorMessage};
+      }
+  });
 }
 
 module.exports.SignInWithEmailAndPassword = (email, password) => {
-    return firebase.auth().signInWithEmailAndPassword(email, password)
-           .catch(function(error) {
-             var errorCode = error.code;
-             var errorMessage = error.message;
-             if (errorCode === 'auth/wrong-password') {
-               return {err: 'Wrong password.'}
-             } else {
-               return {err: errorMessage}
-             }
-             return {err: error}
-           });
-   }
+  return firebase.auth().signInWithEmailAndPassword(email, password)
+      .catch(function(error) {
+          var errorCode = error.code;
+          if (errorCode === 'auth/wrong-password') {
+              throw new Error('auth/wrong-password');
+          } else {
+              throw new Error(error.message); 
+          }
+      });
+}
+
+
 
    module.exports.GetData = () => {
      let data = []

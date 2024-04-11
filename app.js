@@ -28,66 +28,66 @@ firebase.auth().onAuthStateChanged((user) => {
 })
 
 app.get('/', (req, res) => {
-    res.render('login', { signUpError: null, loginError: null }); // Adiciona as variáveis de erro para evitar erro de referência indefinida
+    res.render('index', { signUpError: null, loginError: null });
 })
+
+app.get('/registro', function(req, res){
+    res.render('registro', { signUpError: null, loginError: null });
+});
+
+app.get('/login', function(req, res){
+    res.render('login', { signUpError: null, loginError: null });
+});
 
 app.post('/createuser', (req, res) => {
     Auth.SignUpWithEmailAndPassword(req.body.email, req.body.password)
         .then((user) => {
             if (!user.err) {
-                let userData = user.user;
+                let userData = JSON.parse(user); 
                 Auth.insertUserData(userData).then(() => {
-                    res.redirect('/index');
+                    res.redirect('/login');
                 }).catch(err => {
-                    res.render('login', { signUpError: "Erro ao inserir dados do usuário: " + err.message, loginError: null });
+                    res.render('registro', { signUpError: "Erro ao inserir dados do usuário: " + err.message, loginError: null });
                 });
             } else {
                 if (user.err === 'auth/email-already-in-use') {
-                    res.render('login', { signUpError: "O email já está em uso.", loginError: null });
+                    res.render('registro', { signUpError: "O email já está em uso.", loginError: null });
                 } else if (user.err === 'auth/weak-password') {
-                    res.render('login', { signUpError: "A senha deve ter pelo menos 6 caracteres.", loginError: null });
+                    res.render('registro', { signUpError: "A senha deve ter pelo menos 6 caracteres.", loginError: null });
                 } else {
-                    res.render('login', { signUpError: "Erro ao criar usuário: " + user.err, loginError: null });
+                    res.render('registro', { signUpError: "Erro ao criar usuário: " + user.err, loginError: null });
                 }
             }
-        }).catch(err => {
-            res.render('login', { signUpError: "Erro ao criar usuário: " + err.message, loginError: null });
         });
 });
+
 
 
 
 app.post('/login', (req, res) => {
     let getBody = req.body;
     Auth.SignInWithEmailAndPassword(getBody.email, getBody.password)
-    .then((login) => {
-        if(!login.err){
-            res.redirect('/index');
-        } else {
-            res.render('login', { loginError: "Erro ao fazer login: " + login.err, signUpError: null }); // Renderiza a página de login com a mensagem de erro
-        }
-    }).catch(err => {
-        res.render('login', { loginError: "Erro ao fazer login: " + err.message, signUpError: null }); // Renderiza a página de login com a mensagem de erro
-    });
+        .then(() => {
+            res.redirect('/');
+        })
+        .catch(loginError => {
+            let errorMessage = loginError.err === 'auth/wrong-password' ? "Senha incorreta." : "Erro ao fazer login.";
+            res.render('login', { loginError: errorMessage, signUpError: null });
+        });
 });
+
+
 
 app.get('/index', function(req, res){
     if(userLogged){
-
-
         Auth.GetData().then((data) => {
             res.render('index', {data});
         })
     }else{
-        res.redirect('/')
+        res.redirect('/login')
     }
 });
 
-app.get('/login', function(req, res){
-    if(userLogged){
-        res.redirect('/index')
-    }
-});
 
 
 app.listen(process.env.PORT || 3000)
