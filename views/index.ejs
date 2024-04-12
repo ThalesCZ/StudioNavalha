@@ -63,13 +63,29 @@ https://templatemo.com/tm-585-barber-shop
                                 <a class="nav-link click-scroll" href="#section_3">Serviços</a>
                             </li>
 
-                            <li class="nav-item">
+                            <li class="nav-item">   
                                 <a class="nav-link click-scroll" href="#section_4">Preços</a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="#section_5">Contatos</a>
                             </li>
+                            <li class="nav-item" style="margin-top: 10px;">
+                                <div class="dropdown">
+                                    <span class="dropbtn">
+                                        <i class="bi bi-person-circle" style="font-size: 30px;"></i> <!-- Ícone do Bootstrap com tamanho aumentado -->
+                                    </span>
+                                    <div class="dropdown-content">
+                                        <% if (userLogged) { %>
+                                            <a href="#" class="drop1">Agendamentos</a>
+                                            <a href="/logout" class="drop2">Sair</a> 
+                                        <% } else { %>
+                                            <a href="/login" class="drop3">Logar</a> 
+                                        <% } %>
+                                    </div>                                                     
+                                </div>
+                            </li>
+                            
                         </ul>
                     </div>
                 </nav>
@@ -241,13 +257,13 @@ https://templatemo.com/tm-585-barber-shop
 
                                         <p>Agende seu horario</p>
                                     </div>
-
                                     <div class="booking-form-body">
                                         <div class="row"> 
-                                        <div class="col-lg-4 col-md-10 col-8 mx-auto">
-                                            <button type="submit" class="form-control">Enviar</button>
+                                            <div class="col-lg-4 col-md-10 col-8 mx-auto">
+                                                <a href="/agendar" class="btn-agenda">Agendar</a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </div>                                    
                                 </form>
                         </div>
                     </div>
@@ -437,6 +453,5 @@ https://templatemo.com/tm-585-barber-shop
         <script src="js/bootstrap.min.js"></script>
         <script src="js/click-scroll.js"></script>
         <script src="js/custom.js"></script>
-
     </body>
 </html>
