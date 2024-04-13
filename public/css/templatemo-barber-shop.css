@@ -13,7 +13,7 @@ https://templatemo.com/tm-585-barber-shop
 :root {
   --white-color:                  #fff5f5;
   --primary-color:                #000000;
-  --secondary-color:              #373837;
+  --secondary-color:              #232723;
   --section-bg-color:             #2a353f;
   --custom-btn-bg-color:          #323737;
   --custom-btn-bg-hover-color:    #606060;
@@ -458,21 +458,38 @@ strong {
   FEATURED               
 -----------------------------------------*/
 .featured-section {
-  background-image: url('../images/fundo_desconto_novo.webp');
-  background-repeat: no-repeat;
-  background-attachment: inherit;
-  background-size: cover;
-  position: relative;
-  text-align: center;
-  height: 8%;
+  background: 
+    linear-gradient(rgba(0,0,0,0.5), rgba(0, 0, 0, 0.903)),
+    url('../images/fundo_desconto_novo.webp');
+    text-align: center;
+    background-repeat: no-repeat;
+    background-attachment:inherit;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
 }
+
+
 
 .featured-section h2 {
   color: var(--secondary-color);
+  text-shadow:
+  -0.5px -0.5px 0 #fff,  
+   0.5px -0.5px 0 #fff,
+  -0.5px  0.5px 0 #fff,
+   0.5px  0.5px 0 #fff;
+   ;
 }
 
 .featured-section p {
   color: var(--white-color);
+  text-shadow:
+  -0.5px -0.5px 0 #000000,  
+   0.5px -0.5px 0 #000000,
+  -0.5px  0.5px 0 #000000,
+   0.5px  0.5px 0 #000000;
+  
 }
 
 .featured-section strong {
@@ -501,6 +518,9 @@ strong {
 
 .services-thumb:hover .services-image {
   transform: scale(1.05);
+  filter: blur( 1px);
+  filter: brightness(50%);
+
 }
 
 .services-image {
@@ -509,6 +529,7 @@ strong {
   margin: auto;
   transition: all 0.3s;
 }
+
 
 .services-thumb-price {
   background: white;
@@ -535,12 +556,13 @@ strong {
 
 
 .services-thumb:hover .services-info h4 {
-  color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.866);
   text-shadow: 
-    -2p   x -2px 0 #000,  
+    -2px -2px 0 #000,  
      0.5px -0.5px 0 #000,
     -0.5px  0.5px 0 #000,
-     0.5px  0.5px 0 #000; 
+     0.5px  0.5px 0 #000;
+
 }
 
 
