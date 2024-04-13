@@ -458,12 +458,13 @@ strong {
   FEATURED               
 -----------------------------------------*/
 .featured-section {
-  background-image: url('../images/barber-customer-giving-high-five.jpg');
+  background-image: url('../images/fundo_desconto_novo.webp');
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: inherit;
   background-size: cover;
   position: relative;
   text-align: center;
+  height: 8%;
 }
 
 .featured-section h2 {
@@ -493,7 +494,7 @@ strong {
 }
 
 .services-thumb:hover .services-info {
-  border-color: var(--primary-color);
+  border-color: white;
   border-width: 5px;
   -webkit-text-stroke: #000000;
 }
@@ -510,7 +511,7 @@ strong {
 }
 
 .services-thumb-price {
-  background: var(--primary-color);
+  background: white;
   border-radius: var(--border-radius-medium);
   font-size: var(--copyright-font-size);
   margin-left: auto;
@@ -534,12 +535,12 @@ strong {
 
 
 .services-thumb:hover .services-info h4 {
-  color: rgba(255, 255, 255, 0.815);
+  color: rgb(255, 255, 255);
   text-shadow: 
-    -1px -1px 0 #000,  
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000; 
+    -2p   x -2px 0 #000,  
+     0.5px -0.5px 0 #000,
+    -0.5px  0.5px 0 #000,
+     0.5px  0.5px 0 #000; 
 }
 
 
