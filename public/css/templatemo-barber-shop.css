@@ -12,6 +12,7 @@ https://templatemo.com/tm-585-barber-shop
 -----------------------------------------*/
 :root {
   --white-color:                  #fff5f5;
+  --white-transparent: rgba(255, 255, 255, 0.5);
   --primary-color:                #000000;
   --secondary-color:              #232723;
   --section-bg-color:             #2a353f;
@@ -611,17 +612,25 @@ strong {
   BOOKING               
 -----------------------------------------*/
 .booking-section {
-  background-image: url('../images/vintage-chair-barbershop.jpg');
+  background-image: url('../images/imagem_reserva.png');
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: inherit;
   background-size: cover;
   background-position: center;
 }
 
 .booking-form {
-  background: var(--white-color);
+  background: var(--white-transparent);
   border-radius: var(--border-radius-medium);
   padding: 65px;
+}
+.booking-form:hover{
+transition: all 0.3s;
+background-color: #ffffffc9;
+}
+
+.cor-titulo{
+  color: #000000;
 }
 
 
