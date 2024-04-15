@@ -1,0 +1,42 @@
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ocupa toda a altura da viewport */
+  width: 100vw; /* Ocupa toda a largura da viewport */
+}
+
+.content-container {
+  display: flex; /* Alinha os sub-containers horizontalmente */
+  width: 70vw; /* Largura ajustável */
+  height: 40vw; /* Altura ajustável */
+  background-color: transparent; /* Cor de fundo para visualização, ajustável */
+  border-radius: 5px;
+ 
+}
+
+.sub-container {
+  flex: 1; /* Faz cada sub-container ocupar metade do espaço */
+  border-radius: 0 10px 100px 0 ;
+}
+
+.left-container {
+  background-color: #5a0303d6; /* Cor de fundo azul claro para o container esquerdo */
+  justify-content: center;
+  display:grid;
+  border-radius: 10px 0 0 100px;
+}
+
+.right-container {
+  background-color: #000000; /* Cor de fundo bege para o container direito */
+}
+
+.titulo{
+  margin-top: 10px;
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400px;
+  color: #ffff;
+  
+
+}
+
