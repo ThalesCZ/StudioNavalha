@@ -6,6 +6,7 @@
     const Auth = require('./firebase.js');
     const ejs = require('ejs');
     const cookieParser = require('cookie-parser');
+    const admin = require('firebase-admin');
 
     const app = express();
     const publicDir = require('path').join(__dirname, '/public');
@@ -14,12 +15,28 @@
 
     app.use(cookieParser());
 
+    const serviceAccount = require('./serviceAccountKey.json');
+
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://login-studio-default-rtdb.firebaseio.com/'
+      });
+
+      const uid = 'yKWwU1bJncRFiY9gN7igEWQPNoK2';
+
+      admin.auth().setCustomUserClaims(uid, { admin: true })
+        .then(() => {
+        })
+        .catch(error => {
+          console.error('Erro ao atribuir custom claim de administrador ao usuário:', error);
+        });
+      
 
     const authenticateUser = (req, res, next) => {
         if (req.cookies['userLogged'] === 'true') {
-            next(); // Se o usuário estiver autenticado, continua para a próxima rota
+            next(); 
         } else {
-            res.redirect('/login'); // Se o usuário não estiver autenticado, redireciona para a página de login
+            res.redirect('/login'); 
         }
     };
 
@@ -54,6 +71,10 @@
         res.render('agenda', { userLogged: true });
     });
 
+    app.get('/admin', authenticateUser, (req, res) => {
+        res.render('admin', { userLogged: true });
+    });
+
     app.post('/createuser', (req, res) => {
         Auth.SignUpWithEmailAndPassword(req.body.email, req.body.password)
             .then((user) => {
@@ -85,13 +106,34 @@
         const { email, password } = req.body;
         Auth.SignInWithEmailAndPassword(email, password)
             .then(() => {
-                res.cookie('userLogged', true);
-                res.redirect('/');
+                admin.auth().getUserByEmail(email)
+                    .then((userRecord) => {
+                        const uid = userRecord.uid;
+                        admin.auth().getUser(uid)
+                            .then((userRecord) => {
+                                if (userRecord.customClaims && userRecord.customClaims.admin) {
+                                    res.cookie('userLogged', true);
+                                    res.redirect('/admin');
+                                } else {
+                                    res.cookie('userLogged', true);
+                                    res.redirect('/');
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Erro ao obter o usuário do Firebase:', error);
+                                res.redirect('/');
+                            });
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao obter o usuário do Firebase:', error);
+                        res.redirect('/');
+                    });
             })
             .catch(loginError => {
                 let errorMessage = "Usuário ou senha inválida!";
                 res.render('login', { loginError: errorMessage, signUpError: null });
             });
     });
+    
 
     app.listen(process.env.PORT || 3000);
