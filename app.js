@@ -13,7 +13,21 @@ const publicDir = require('path').join(__dirname, '/public');
 
 app.use(cookieParser());
 
-const serviceAccount = require('./serviceAccountKey.json');
+var serviceAccount = {
+    type: process.env.TYPE,
+    project_id: process.env.PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: process.env.PRIVATE_KEY,
+    client_email: process.env.CLIENT_EMAIL,
+    client_id: process.env.CLIENT_ID,
+    auth_uri: process.env.AUTH_URI,
+    token_uri: process.env.TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+    universe_domain: process.env.UNIVERSE_DOMAIN
+};
+
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -22,7 +36,7 @@ admin.initializeApp({
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
-const authenticateUser = (req, res, next) => {
+const authenticateAdmin = (req, res, next) => {
     if (req.cookies['userLogged'] === 'true') {
         const uid = req.cookies['uid'];
         admin.auth().getUser(uid)
@@ -31,6 +45,26 @@ const authenticateUser = (req, res, next) => {
                     next();
                 } else {
                     res.redirect('/');
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao verificar o usuário:', error);
+                res.redirect('/');
+            });
+    } else {
+        res.redirect('/login');
+    }
+};
+
+const authenticateUser = (req, res, next) => {
+    if (req.cookies['userLogged'] === 'true') {
+        const uid = req.cookies['uid'];
+        admin.auth().getUser(uid)
+            .then((userRecord) => {
+                if (userRecord.customClaims && userRecord.customClaims.admin) {
+                    res.redirect('/admin');
+                } else {
+                    next();
                 }
             })
             .catch((error) => {
@@ -70,13 +104,14 @@ app.get('/login', (req, res) => {
     res.render('login', { signUpError: null, loginError: null });
 });
 
+app.get('/admin', authenticateAdmin, (req, res) => {
+    res.render('admin', { userLogged: true });
+});
+
 app.get('/agenda', authenticateUser, (req, res) => {
     res.render('agenda', { userLogged: true });
 });
 
-app.get('/admin', authenticateUser, (req, res) => {
-    res.render('admin', { userLogged: true });
-});
 
 
 app.post('/createuser', (req, res) => {
@@ -123,13 +158,17 @@ app.post('/login', async (req, res) => {
         if (email === adminEmail) {
             res.redirect('/admin');
         } else {
-            res.redirect('/');
+            res.redirect('/agenda');
         }
     } catch (error) {
         console.error('Erro durante o login:', error);
         let errorMessage = "Usuário ou senha inválida!";
         res.render('login', { loginError: errorMessage, signUpError: null });
     }
+});
+
+app.use((req, res) => {
+    res.redirect('/');
 });
 
 
