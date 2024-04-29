@@ -7,6 +7,7 @@ const Auth = require('./firebase.js');
 const ejs = require('ejs');
 const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
+const path = require('path');
 
 const app = express();
 const publicDir = require('path').join(__dirname, '/public');
@@ -89,6 +90,7 @@ app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/style', express.static(__dirname + '/style/'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
