@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-
 const sequelize = new Sequelize(
   process.env.POSTGRES_DATABASE,
   process.env.POSTGRES_USER,
@@ -9,9 +8,8 @@ const sequelize = new Sequelize(
     port: process.env.POSTGRES_PORT || 5432,
     dialect: 'postgres',
     dialectOptions: {
-      ssl: process.env.NODE_ENV === 'production',
+      ssl: { require: true, rejectUnauthorized: false }
     },
   }
 );
-
 module.exports = sequelize;

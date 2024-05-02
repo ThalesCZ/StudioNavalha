@@ -9,12 +9,13 @@ const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
 const path = require('path');
 
-//models
-const database = require('./db.js');
-const Cliente = require('./models/cliente.js');
-
 const app = express();
 const publicDir = require('path').join(__dirname, '/public');
+
+//banco
+const sequelize = require('./db.js');
+const Cliente = require('./models/cliente.js');
+
 
 app.use(cookieParser());
 
@@ -121,29 +122,18 @@ app.get('/agenda', authenticateUser, (req, res) => {
 
 
 app.post('/createuser', async (req, res) => {
-    const { email, password, nome, telefone } = req.body;
-
     try {
-        const novoCliente = await Cliente.create({
-            nome: nome,
-            telefone: telefone,
-            email: email
-        });
+        const { username, email, password } = req.body;
 
-        const user = await Auth.SignUpWithEmailAndPassword(email, password);
-        const userData = JSON.parse(user);
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const { uid } = userCredential.user;
 
-        await Auth.insertUserData(userData);
+        await Cliente.create({ nome: username, email: email, uid: uid });
 
         res.redirect('/login');
     } catch (error) {
-        if (error.message === 'auth/email-already-in-use') {
-            res.render('registro', { signUpError: "O email já está em uso.", loginError: null });
-        } else if (error.message === 'auth/weak-password') {
-            res.render('registro', { signUpError: "A senha deve ter pelo menos 6 caracteres.", loginError: null });
-        } else {
-            res.render('registro', { signUpError: "Erro ao criar usuário: " + error.message, loginError: null });
-        }
+        console.error('Erro ao registrar cliente:', error);
+        res.render('registro', { signUpError: "Ocorreu um erro ao processar o registro." });
     }
 });
 
@@ -177,6 +167,19 @@ app.post('/login', async (req, res) => {
         res.render('login', { loginError: errorMessage, signUpError: null });
     }
 });
+
+(async () => {
+    try {
+      await sequelize.authenticate();
+      console.log('Conexão com o banco de dados estabelecida com sucesso!');
+      
+      await Cliente.sync();
+      
+      console.log('Modelos sincronizados com o banco de dados!');
+    } catch (error) {
+      console.error('Erro ao conectar ao banco de dados:', error);
+    }
+  })();
 
 app.use((req, res) => {
     res.redirect('/');

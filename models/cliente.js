@@ -4,12 +4,13 @@ const sequelize = require('../db');
 const Cliente = sequelize.define('Cliente', {
   nome: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: true,
-  },
+    allowNull: false,
+    unique: true
+  }
 });
 
 module.exports = Cliente;
