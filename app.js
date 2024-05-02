@@ -9,6 +9,9 @@ const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
 const path = require('path');
 
+//models
+const Cliente = require('./models/cliente.js');
+
 const app = express();
 const publicDir = require('path').join(__dirname, '/public');
 
@@ -116,26 +119,31 @@ app.get('/agenda', authenticateUser, (req, res) => {
 
 
 
-app.post('/createuser', (req, res) => {
-    Auth.SignUpWithEmailAndPassword(req.body.email, req.body.password)
-        .then((user) => {
-            if (!user.err) {
-                let userData = JSON.parse(user);
-                Auth.insertUserData(userData).then(() => {
-                    res.redirect('/login');
-                }).catch(err => {
-                    res.render('registro', { signUpError: "Erro ao inserir dados do usuário: " + err.message, loginError: null });
-                });
-            } else {
-                if (user.err === 'auth/email-already-in-use') {
-                    res.render('registro', { signUpError: "O email já está em uso.", loginError: null });
-                } else if (user.err === 'auth/weak-password') {
-                    res.render('registro', { signUpError: "A senha deve ter pelo menos 6 caracteres.", loginError: null });
-                } else {
-                    res.render('registro', { signUpError: "Erro ao criar usuário: " + user.err, loginError: null });
-                }
-            }
+app.post('/createuser', async (req, res) => {
+    const { email, password, nome, telefone } = req.body;
+
+    try {
+        const novoCliente = await Cliente.create({
+            nome: nome,
+            telefone: telefone,
+            email: email
         });
+
+        const user = await Auth.SignUpWithEmailAndPassword(email, password);
+        const userData = JSON.parse(user);
+
+        await Auth.insertUserData(userData);
+
+        res.redirect('/login');
+    } catch (error) {
+        if (error.message === 'auth/email-already-in-use') {
+            res.render('registro', { signUpError: "O email já está em uso.", loginError: null });
+        } else if (error.message === 'auth/weak-password') {
+            res.render('registro', { signUpError: "A senha deve ter pelo menos 6 caracteres.", loginError: null });
+        } else {
+            res.render('registro', { signUpError: "Erro ao criar usuário: " + error.message, loginError: null });
+        }
+    }
 });
 
 app.get('/logout', (req, res) => {
