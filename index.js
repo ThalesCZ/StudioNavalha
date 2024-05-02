@@ -1,5 +1,4 @@
-const sequelize = require('.db');
-const Cliente = require('./models/cliente');
+const sequelize = require('./db');
 
 async function init() {
   try {

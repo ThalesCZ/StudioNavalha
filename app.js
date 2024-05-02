@@ -10,6 +10,7 @@ const admin = require('firebase-admin');
 const path = require('path');
 
 //models
+const database = require('./db.js');
 const Cliente = require('./models/cliente.js');
 
 const app = express();
