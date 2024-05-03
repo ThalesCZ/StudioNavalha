@@ -170,16 +170,12 @@ app.post('/login', async (req, res) => {
 
 (async () => {
     try {
-      await sequelize.authenticate();
-      console.log('Conexão com o banco de dados estabelecida com sucesso!');
-      
-      await Cliente.sync();
-      
+      await sequelize.sync(); 
       console.log('Modelos sincronizados com o banco de dados!');
     } catch (error) {
-      console.error('Erro ao conectar ao banco de dados:', error);
+      console.error('Erro ao sincronizar modelos com o banco de dados:', error);
     }
-  })();
+})();
 
 app.use((req, res) => {
     res.redirect('/');
