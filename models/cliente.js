@@ -1,7 +1,9 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../db.js');
 
-const Cliente = sequelize.define('Cliente', {
+class Cliente extends Model {}
+
+Cliente.init({
   nome: {
     type: DataTypes.STRING,
     allowNull: false
@@ -11,6 +13,10 @@ const Cliente = sequelize.define('Cliente', {
     allowNull: false,
     unique: true
   }
+}, {
+  sequelize,
+  modelName: 'Cliente',
+  tableName: 'clientes'
 });
 
 module.exports = Cliente;
