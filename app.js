@@ -13,8 +13,7 @@ const app = express();
 const publicDir = require('path').join(__dirname, '/public');
 
 //banco
-const sequelize = require('./db.js');
-const Cliente = require('./models/cliente.js');
+const pool = require('./db.js');
 
 
 app.use(cookieParser());
@@ -128,7 +127,12 @@ app.post('/createuser', async (req, res) => {
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const { uid } = userCredential.user;
 
-        await Cliente.create({ nome: username, email: email, uid: uid });
+        const query = `
+            INSERT INTO cliente (nome, email, uid)
+            VALUES ($1, $2, $3)
+        `;
+        const values = [username, email, uid];
+        await pool.query(query, values);
 
         res.redirect('/login');
     } catch (error) {

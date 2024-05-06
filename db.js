@@ -9,7 +9,8 @@ pool.query(`
   CREATE TABLE IF NOT EXISTS cliente (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL,
+    uid VARCHAR(100) NOT NULL
   )
 `, (err, res) => {
   if (err) {
@@ -18,3 +19,5 @@ pool.query(`
     console.log('Tabela cliente criada com sucesso');
   }
 });
+
+module.exports = pool;
