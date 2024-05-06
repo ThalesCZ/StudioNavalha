@@ -1,22 +1,40 @@
-const { Pool } = require('pg');
+const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const pool = new Pool({
-  connectionString: "postgres://default:bS1ZtW6iMdqH@ep-frosty-glitter-a46qayt7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require?sslmode=require",
+const sequelize = new Sequelize(process.env.POSTGRES_URL, {
+  logging: false // Opção para desativar os logs do Sequelize
 });
 
-pool.query(`
-  CREATE TABLE IF NOT EXISTS cliente (
-    uid SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
-  )
-`, (err, res) => {
-  if (err) {
-    console.error('Erro ao criar a tabela cliente:', err);
-  } else {
-    console.log('Tabela cliente criada com sucesso');
+// Definindo o modelo da tabela Cliente
+const Cliente = sequelize.define('cliente', {
+  uid: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  nome: {
+    type: Sequelize.STRING(100),
+    allowNull: false
+  },
+  email: {
+    type: Sequelize.STRING(100),
+    allowNull: false
   }
 });
 
-module.exports = pool;
+// Sincronizando o modelo com o banco de dados
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexão com o banco de dados estabelecida com sucesso.');
+
+    // Sincronizando o modelo com o banco de dados (criará a tabela se ela não existir)
+    await Cliente.sync();
+    console.log('Tabela cliente sincronizada com sucesso.');
+
+  } catch (error) {
+    console.error('Erro ao conectar/sincronizar com o banco de dados:', error);
+  }
+})();
+
+module.exports = Cliente;
