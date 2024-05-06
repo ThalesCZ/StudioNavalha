@@ -128,10 +128,10 @@ app.post('/createuser', async (req, res) => {
         const { uid } = userCredential.user;
 
         const query = `
-            INSERT INTO cliente (nome, email, uid)
-            VALUES ($1, $2, $3)
+            INSERT INTO cliente (nome, email)
+            VALUES ($1, $2)
         `;
-        const values = [username, email, uid];
+        const values = [username, email];
         await pool.query(query, values);
 
         res.redirect('/login');
