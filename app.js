@@ -39,7 +39,7 @@ admin.initializeApp({
     databaseURL: 'https://login-studio-default-rtdb.firebaseio.com/'
 });
 
-const adminEmail = process.env.ADMIN_EMAIL;
+const adminEmail = process.env.ADMIN_EMAIL; 
 
 const authenticateAdmin = (req, res, next) => {
     if (req.cookies['userLogged'] === 'true') {
@@ -137,7 +137,16 @@ app.post('/createuser', async (req, res) => {
         res.redirect('/login');
     } catch (error) {
         console.error('Erro ao registrar cliente:', error);
-        res.render('registro', { signUpError: "Ocorreu um erro ao processar o registro." });
+
+        let errorMessage = '';
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'O e-mail já cadastrado. Por favor, escolha outro.';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+        } else {
+            errorMessage = 'Erro ao criar usuário: ' + error.message;
+        }
+        res.render('registro', { signUpError: errorMessage, loginError: null });
     }
 });
 
@@ -152,8 +161,10 @@ app.post('/login', async (req, res) => {
 
         await Auth.SignInWithEmailAndPassword(email, password);
 
-        const userRecord = await admin.auth().getUserByEmail(email);
-        const uid = userRecord.uid;
+        const query = 'SELECT uid FROM cliente WHERE email = $1';
+        const { rows } = await pool.query(query, [email]);
+
+        const uid = rows[0].uid;
 
         if (email === adminEmail) {
             await admin.auth().setCustomUserClaims(uid, { admin: true });
@@ -166,14 +177,13 @@ app.post('/login', async (req, res) => {
             res.redirect('/agenda');
         }
     } catch (error) {
-        console.error('Erro durante o login:', error);
+        console.error('Erro ao autenticar usuário:', error); 
         let errorMessage = "Usuário ou senha inválida!";
         res.render('login', { loginError: errorMessage, signUpError: null });
     }
 });
 
-
-  
+module.exports = pool;
 
 app.use((req, res) => {
     res.redirect('/');
