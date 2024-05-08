@@ -188,12 +188,10 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
-module.exports = pool;
-
 app.use((req, res) => {
     res.redirect('/');
 });
 
+module.exports = app;
 
 app.listen(process.env.PORT || 3000);
