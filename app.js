@@ -128,11 +128,12 @@ app.post('/createuser', async (req, res) => {
         const { uid } = userCredential.user;
 
         const query = `
-            INSERT INTO cliente (nome, email)
-            VALUES ($1, $2)
-        `;
-        const values = [username, email];
+        INSERT INTO cliente (nome, email, uid)
+        VALUES ($1, $2, $3)
+    `;
+        const values = [username, email, uid.toString()]; 
         await pool.query(query, values);
+    
 
         res.redirect('/login');
     } catch (error) {
@@ -161,16 +162,20 @@ app.post('/login', async (req, res) => {
 
         await Auth.SignInWithEmailAndPassword(email, password);
 
+        
         const query = 'SELECT uid FROM cliente WHERE email = $1';
         const { rows } = await pool.query(query, [email]);
 
-        const uid = rows[0].uid;
+        let uid;
+        if (rows.length > 0) {
+            uid = rows[0].uid;
+        }
 
         if (email === adminEmail) {
             await admin.auth().setCustomUserClaims(uid, { admin: true });
         }
         res.cookie('userLogged', true);
-        res.cookie('uid', uid);
+        res.cookie('uid', uid); 
         if (email === adminEmail) {
             res.redirect('/admin');
         } else {
@@ -182,6 +187,7 @@ app.post('/login', async (req, res) => {
         res.render('login', { loginError: errorMessage, signUpError: null });
     }
 });
+
 
 module.exports = pool;
 
