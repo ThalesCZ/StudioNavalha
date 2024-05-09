@@ -1,22 +1,47 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+  const { Sequelize, DataTypes } = require('sequelize');
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-});
+  const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
 
-pool.query(`
-  CREATE TABLE IF NOT EXISTS cliente (
-    uid TEXT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
-  )
-`, (err, res) => {
-  if (err) {
-    console.error('Erro ao criar a tabela cliente:', err);
-  } else {
-    console.log('Tabela cliente criada com sucesso');
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false 
+      }
+    }
+  });
+
+  const Clientes = sequelize.define('Clientes', {
+    uid: {
+      type: DataTypes.STRING,
+      primaryKey: true
+    },
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true 
+    }
+  });
+
+  async function syncDB() {
+    try {
+      await sequelize.authenticate();
+      console.log('Conexão com o banco de dados estabelecida com sucesso.');
+
+      await Clientes.sync();
+      console.log('Tabela Cliente criada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao conectar e sincronizar o banco de dados:', error);
+    }
   }
-});
 
-module.exports = pool;
+  module.exports = {
+    Clientes,
+    syncDB
+  };

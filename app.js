@@ -13,8 +13,10 @@ const app = express();
 const publicDir = require('path').join(__dirname, '/public');
 
 //banco
-const pool = require('./db.js');
-
+const db = require('./db.js');
+const { criarCliente } = require('./cliente.js');
+const { obterUidPorEmail } = require('./cliente');
+const { obterClientePorUid } = require('./cliente');
 
 app.use(cookieParser());
 
@@ -123,33 +125,27 @@ app.get('/agenda', authenticateUser, (req, res) => {
 app.post('/createuser', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-
+    
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const { uid } = userCredential.user;
-
-        const query = `
-        INSERT INTO cliente (nome, email, uid)
-        VALUES ($1, $2, $3)
-    `;
-        const values = [username, email, uid.toString()]; 
-        await pool.query(query, values);
     
-
+        await criarCliente(username, email, uid);
+    
         res.redirect('/login');
-    } catch (error) {
+      } catch (error) {
         console.error('Erro ao registrar cliente:', error);
-
+    
         let errorMessage = '';
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'O e-mail já cadastrado. Por favor, escolha outro.';
+          errorMessage = 'O e-mail já cadastrado. Por favor, escolha outro.';
         } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+          errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
         } else {
-            errorMessage = 'Erro ao criar usuário: ' + error.message;
+          errorMessage = 'Erro ao criar usuário: ' + error.message;
         }
         res.render('registro', { signUpError: errorMessage, loginError: null });
-    }
-});
+      }
+    });
 
 app.get('/logout', (req, res) => {
     res.clearCookie('userLogged');
@@ -162,36 +158,62 @@ app.post('/login', async (req, res) => {
 
         await Auth.SignInWithEmailAndPassword(email, password);
 
-        
-        const query = 'SELECT uid FROM cliente WHERE email = $1';
-        const { rows } = await pool.query(query, [email]);
+        const uid = await obterUidPorEmail(email);
 
-        let uid;
-        if (rows.length > 0) {
-            uid = rows[0].uid;
-        }
-
-        if (email === adminEmail) {
-            await admin.auth().setCustomUserClaims(uid, { admin: true });
-        }
-        res.cookie('userLogged', true);
-        res.cookie('uid', uid); 
-        if (email === adminEmail) {
-            res.redirect('/admin');
+        if (uid) {
+            if (email === adminEmail) {
+                await admin.auth().setCustomUserClaims(uid, { admin: true });
+            }
+            res.cookie('userLogged', true);
+            res.cookie('uid', uid);
+            if (email === adminEmail) {
+                res.redirect('/admin');
+            } else {
+                res.redirect('/agenda');
+            }
         } else {
-            res.redirect('/agenda');
+            throw new Error('UID não encontrado');
         }
     } catch (error) {
-        console.error('Erro ao autenticar usuário:', error); 
+        console.error('Erro ao autenticar usuário:', error);
         let errorMessage = "Usuário ou senha inválida!";
+        if (error.message === 'UID não encontrado') {
+            errorMessage = 'Erro interno. Por favor, tente novamente.';
+        }
         res.render('login', { loginError: errorMessage, signUpError: null });
     }
 });
+
+app.get('/agenda', authenticateUser, async (req, res) => {
+    try {
+        const uid = req.cookies['uid'];
+        const cliente = await obterClientePorUid(uid);
+
+        if (cliente) {
+            res.render('agenda', { userLogged: true, userName: cliente.nome });
+        } else {
+            throw new Error('Cliente não encontrado');
+        }
+    } catch (error) {
+        console.error('Erro ao carregar agenda:', error);
+        res.render('agenda', { userLogged: true, userName: 'Usuário' });
+    }
+});
+
+
 
 app.use((req, res) => {
     res.redirect('/');
 });
 
-app.listen(process.env.PORT || 3000);
+db.syncDB().then(() => {
+    app.listen(process.env.PORT || 3000, () => {
+        console.log('Servidor está rodando na porta:', process.env.PORT || 3000);
+    });
+}).catch(err => {
+    console.error('Erro ao iniciar o servidor:', err);
+});
+
+
 
 module.exports = app;
