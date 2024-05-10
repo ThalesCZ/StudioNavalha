@@ -1,12 +1,32 @@
+<!-- views/agenda.ejs -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Agenda</title>
+    <title>Agenda da Barbearia</title>
 </head>
 <body>
-    <h1>Agenda</h1>
+    <h1>Agenda da Barbearia</h1>
+    <form action="/agendar" method="post">
+        <label for="barbeiro">Escolha o Barbeiro:</label>
+        <select name="barbeiroId" id="barbeiro">
+            <% barbeiros.forEach(barbeiro => { %>
+                <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+            <% }); %>
+        </select>
+
+        <label for="servico">Escolha o Serviço:</label>
+        <select name="servicoId" id="servico">
+            <% servicos.forEach(servico => { %>
+                <option value="<%= servico.id %>"><%= servico.descricao %></option>
+            <% }); %>
+        </select>
+
+        <label for="dataHora">Escolha o Horário:</label>
+        <input type="datetime-local" name="dataHora" id="dataHora" required>
+
+        <button type="submit">Agendar</button>
+    </form>
 </body>
 </html>

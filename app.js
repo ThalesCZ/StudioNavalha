@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const { Sequelize } = require('sequelize');
 const express = require('express');
 const bodyParser = require('body-parser');
 const firebase = require('firebase');
@@ -14,6 +15,7 @@ const publicDir = require('path').join(__dirname, '/public');
 
 //banco
 const db = require('./db.js');
+const { Clientes, Barbeiros, Servicos, Agendamentos } = require('./db');
 const { criarCliente } = require('./cliente.js');
 const { obterUidPorEmail } = require('./cliente');
 const { obterClientePorUid } = require('./cliente');
@@ -116,12 +118,6 @@ app.get('/admin', authenticateAdmin, (req, res) => {
     res.render('admin', { userLogged: true });
 });
 
-app.get('/agenda', authenticateUser, (req, res) => {
-    res.render('agenda', { userLogged: true });
-});
-
-
-
 app.post('/createuser', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -186,20 +182,81 @@ app.post('/login', async (req, res) => {
 
 app.get('/agenda', authenticateUser, async (req, res) => {
     try {
-        const uid = req.cookies['uid'];
-        const cliente = await obterClientePorUid(uid);
-
-        if (cliente) {
-            res.render('agenda', { userLogged: true, userName: cliente.nome });
-        } else {
-            throw new Error('Cliente não encontrado');
-        }
+        const barbeiros = await Barbeiros.findAll();
+        const servicos = await Servicos.findAll(); // Presumindo que você também quer listar os serviços na mesma página
+        res.render('agenda', { 
+            userLogged: true, 
+            barbeiros: barbeiros,
+            servicos: servicos 
+        });
     } catch (error) {
-        console.error('Erro ao carregar agenda:', error);
-        res.render('agenda', { userLogged: true, userName: 'Usuário' });
+        console.error('Erro ao carregar os dados para a agenda:', error);
+        res.status(500).send('Erro ao carregar a página de agenda');
     }
 });
 
+// Rota para adicionar um novo barbeiro
+app.post('/add-barbeiro', async (req, res) => {
+    try {
+        const { nome } = req.body;
+        await Barbeiros.create({ nome });
+        res.redirect('/admin'); 
+    } catch (error) {
+        console.error('Erro ao adicionar barbeiro:', error);
+        res.status(500).send('Erro ao adicionar barbeiro');
+    }
+});
+
+// Rota para adicionar um novo serviço
+app.post('/add-servico', async (req, res) => {
+    try {
+        const { descricao, duracao } = req.body;
+        await Servicos.create({ descricao, duracao });
+        res.redirect('/admin'); 
+    } catch (error) {
+        console.error('Erro ao adicionar serviço:', error);
+        res.status(500).send('Erro ao adicionar serviço');
+    }
+});
+
+
+app.post('/agendar', async (req, res) => {
+    const { barbeiroId, servicoId, dataHora } = req.body;
+    const servico = await Servicos.findByPk(servicoId);
+    const dataHoraInicio = new Date(dataHora);
+    const dataHoraFim = new Date(dataHoraInicio.getTime() + servico.duracao * 60000);
+
+    const conflito = await Agendamentos.findOne({
+        where: {
+            barbeiroId: barbeiroId,
+            [Sequelize.Op.or]: [
+                {
+                    dataHoraInicio: {
+                        [Sequelize.Op.between]: [dataHoraInicio, dataHoraFim]
+                    }
+                },
+                {
+                    dataHoraFim: {
+                        [Sequelize.Op.between]: [dataHoraInicio, dataHoraFim]
+                    }
+                }
+            ]
+        }
+    });
+
+    if (!conflito) {
+        await Agendamentos.create({
+            barbeiroId,
+            servicoId,
+            dataHoraInicio,
+            dataHoraFim,
+            clienteUid: req.cookies['uid'] 
+        });
+        res.send('Agendamento confirmado!');
+    } else {
+        res.send('Este horário já está ocupado.');
+    }
+});
 
 
 app.use((req, res) => {
@@ -213,7 +270,5 @@ db.syncDB().then(() => {
 }).catch(err => {
     console.error('Erro ao iniciar o servidor:', err);
 });
-
-
 
 module.exports = app;
