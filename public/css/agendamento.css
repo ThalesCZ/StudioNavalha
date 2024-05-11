@@ -1,3 +1,4 @@
+
 body {
   font-family: 'Kanit', sans-serif;
   margin: 0;
@@ -26,10 +27,9 @@ body {
 
 .left-panel {
   background-color: #ffffff;
-  display: flex;        
-  flex-direction: column; 
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-
 }
 
 .right-panel {
@@ -37,10 +37,9 @@ body {
   align-items: center;
   justify-content: center;
   display: flex;
-  border-radius: 20px;  
-  flex: 1;  
+  border-radius: 20px;
+  flex: 1;
 }
-
 
 .form-group {
   margin-bottom: 15px;
@@ -91,7 +90,6 @@ body {
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
 }
 
-
 #calendar-header {
   display: flex;
   justify-content: space-between;
@@ -108,7 +106,6 @@ body {
 
 #calendar th, #calendar td {
   padding: 10px;
-  
   text-align: center; 
 }
 
@@ -129,11 +126,6 @@ body {
   margin: 0 5px;  
 }
 
-.form-control{
-  height: 50%;
-  width: 50%;
-}
-
 .disabled-day {
   background-color: #e0dddd;
   color: #7c0000;
@@ -152,14 +144,83 @@ body {
   transition: 0.2s;
 }
 
-
 .confirm {
+  width: 100%;
   padding: 10px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #4CAF50; 
-  color: white;         
-  cursor: pointer;        
-  text-align: center;     
-  margin-top: auto;      
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  margin-top: auto;
+}
+
+@media (max-width: 768px ) {
+  .container {
+      flex-direction: column;
+      height: auto;
+  }
+
+  .left-panel, .right-panel {
+      width: 100%;
+      padding: 10px;
+  }
+
+  #calendar-container {
+      height: auto;
+  }
+
+  .form-control, .btn {
+      width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkbox-group {
+      flex-direction: column;
+  }
+
+  .checkbox-group label {
+      margin-top: 5px;
+  }
+
+  .btn {
+      padding: 12px 20px;
+      margin-top: 20px;
+  }
+}
+@media (max-height: 578px ) {
+  .container {
+      flex-direction: column;
+      height: auto;
+  }
+
+  .left-panel, .right-panel {
+      width: 100%;
+      padding: 10px;
+  }
+
+  #calendar-container {
+      height: auto;
+  }
+
+  .form-control, .btn {
+      width: 100%;
+  }
+}
+
+@media (max-height: 468px) {
+  .checkbox-group {
+      flex-direction: column;
+  }
+
+  .checkbox-group label {
+      margin-top: 5px;
+  }
+
+  .btn {
+      padding: 12px 20px;
+      margin-top: 20px;
+  }
 }
