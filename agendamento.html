@@ -32,41 +32,57 @@
                         <option value="2">Mr. Barba</option>
                     </select>
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="bring-guest" name="bring-guest">
-                    <label for="bring-guest">Trará alguém com você?</label>
-                </div>
-                <button type="button" class="btn extra" onclick="toggleExtraInput()">Adicionar Extra</button>
-                <input type="text" id="extra-input" class="form-control" style="display: none;" placeholder="Escreva o extra desejado">
             </form>
 
-            <button class="confirm">CONFIRMAR</button>
+
         </div>
-        <div class="right-panel">
-            <div id="calendar-container">
-                <div id="calendar-header">
-                    <button id="prev-month">&#10094;</button>
-                    <h2 id="month-year"></h2>
-                    <button id="next-month">&#10095;</button>
+            <div class="right-panel">
+                <div id="calendar-container">
+                    <div id="calendar-header">
+                        <button id="prev-month">&#10094;</button>
+                        <h2 id="month-year"></h2>
+                        <button id="next-month">&#10095;</button>
+                    </div>
+                    <table id="calendar">
+                        <thead>
+                            <tr>
+                                <th>D</th>
+                                <th>S</th>
+                                <th>T</th>
+                                <th>Q</th>
+                                <th>Q</th>
+                                <th>S</th>
+                                <th>S</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body">
+                        </tbody>
+                    </table>
                 </div>
-                <table id="calendar">
-                    <thead>
-                        <tr>
-                            <th>D</th>
-                            <th>S</th>
-                            <th>T</th>
-                            <th>Q</th>
-                            <th>Q</th>
-                            <th>S</th>
-                            <th>S</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calendar-body">
-                    </tbody>
-                </table>
             </div>
-        </div>
-    </div>
+            <div class="booking-panel">
+                <form>
+                    <div class="form-group">
+                        <label for="appointment-date">Data:</label>
+                        <input type="date" id="appointment-date" class="form-control" readonly>
+                    </div>
+    
+                    <button id="open-time-picker" class="btn" type="button">Escolher Horário</button>
+
+                    <div id="time-picker-popup" class="time-picker-popup" style="display: none;">
+                        <div class="popup-content">
+                            <h3>Escolha um Horário</h3>
+                            <select id="time-options" class="form-control">
+                            </select>
+                            <button id="confirm-time" class="btn" type="button">Confirmar</button>
+                            <button id="close-popup" class="btn" type="button">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+</div>
+    <button class="confirm">CONFIRMAR</button>
     <script>
 
         function getHolidays(year) {
@@ -137,6 +153,7 @@
                             }
                             selectedDate = cell;
                             selectedDate.classList.add('selected-day');
+                            document.getElementById('appointment-date').value = dateString; // Atualiza o campo de data
                             console.log("Selected Date:", dateString); // Log da data selecionada
                         });
                     }
@@ -171,19 +188,36 @@
     updateCalendar();
 });
 
+
 </script>
 
 <script>
-    function toggleExtraInput() {
-        var extraInput = document.getElementById("extra-input");
-        if (extraInput.style.display === "none") {
-            extraInput.style.display = "block";
-        } else {
-            extraInput.style.display = "none";
-        }
-    }
-    </script>
-    
+document.addEventListener('DOMContentLoaded', function() {
+    const timePickerPopup = document.getElementById('time-picker-popup');
+    const openTimePickerBtn = document.getElementById('open-time-picker');
+    const confirmTimeBtn = document.getElementById('confirm-time');
+    const closePopupBtn = document.getElementById('close-popup');
+    const timeOptionsSelect = document.getElementById('time-options');
+
+    openTimePickerBtn.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        timePickerPopup.style.display = 'flex';
+    });
+
+    closePopupBtn.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        timePickerPopup.style.display = 'none';
+    });
+
+    confirmTimeBtn.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        const selectedTime = timeOptionsSelect.value;
+        console.log("Horário escolhido:", selectedTime);
+        timePickerPopup.style.display = 'none';
+    });
+});
+
+</script>
 
 
 </body>
