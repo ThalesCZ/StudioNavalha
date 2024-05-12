@@ -7,9 +7,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:wght@200;400;700&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="public/css/agendamento.css">
     <link href="https://cdn.jsdelivr.net/npm/pg-calendar@1.4.31/dist/css/pignose.calendar.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    <img class="logo" src="public/images/logo.png" alt="">
+    <div class="topo">
+        <button id="menu-button" class="menu-button">☰</button> <!-- Botão de menu para telas pequenas -->
+        <div class="menu-content">
+            <button class="return">VOLTAR PARA O INICIO</button>
+            <img class="logo" src="public/images/logo.png" alt="Logo">
+            <button class="myagend">MEUS AGENDAMENTOS</button>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="left-panel">
             <h1>Agende seu Horario Agora</h1>
@@ -34,10 +45,8 @@
                     </select>
                 </div>
             </form>
-
-
         </div>
-            <div class="right-panel">
+        <div class="right-panel">
                 <div id="calendar-container">
                     <div id="calendar-header">
                         <button id="prev-month">&#10094;</button>
@@ -62,7 +71,7 @@
                 </div>
             </div>
             <div class="booking-panel">
-                <form>
+                <form class="form-time">
                     <div class="form-group">
                         <label for="appointment-date">Data:</label>
                         <input type="date" id="appointment-date" class="form-control" readonly>
@@ -81,8 +90,8 @@
                     </div>
                 </form>
             </div>
-
-</div>
+        </div>
+    </div>
     <button class="confirm">CONFIRMAR</button>
     <script>
 
@@ -217,6 +226,19 @@ document.addEventListener('DOMContentLoaded', function() {
         timePickerPopup.style.display = 'none';
     });
 });
+
+</script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.getElementById('menu-button');
+        const topo = document.querySelector('.topo');
+
+        menuButton.addEventListener('click', function() {
+            topo.classList.toggle('active');
+        });
+    });
 
 </script>
 
