@@ -80,6 +80,42 @@ const Agendamentos = sequelize.define('Agendamentos', {
     }
 });
 
+// Definição da tabela HorariosDisponiveis
+const HorariosDisponiveis = sequelize.define('HorariosDisponiveis', {
+    horario: {
+        type: DataTypes.TIME,
+        allowNull: false
+    }
+});
+
+Agendamentos.belongsTo(Servicos, { foreignKey: 'servicoId' });
+// Função para popular a tabela HorariosDisponiveis
+async function popularHorariosDisponiveis() {
+    try {
+        const startHour = 9; // Horário inicial (9h)
+        const endHour = 19; // Horário final (19h)
+        const interval = 30; // Intervalo em minutos
+
+        const horarios = [];
+        for (let hour = startHour; hour < endHour; hour++) {
+            for (let minute = 0; minute < 60; minute += interval) {
+                const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                horarios.push({ horario: timeString });
+            }
+        }
+
+        await HorariosDisponiveis.bulkCreate(horarios);
+        console.log('Horários disponíveis populados com sucesso.');
+    } catch (error) {
+        console.error('Erro ao popular os horários disponíveis:', error);
+    }
+}
+
+
+
+
+
+// Função para sincronizar o banco de dados
 // Função para sincronizar o banco de dados
 async function syncDB() {
     try {
@@ -90,8 +126,14 @@ async function syncDB() {
         await Barbeiros.sync();
         await Servicos.sync();
         await Agendamentos.sync();
+        
+        // Sincronize também a tabela HorariosDisponiveis
+        await HorariosDisponiveis.sync();
 
-        console.log('Tabelas criadas com sucesso.');
+        // Popule os horários disponíveis
+        await popularHorariosDisponiveis();
+
+        console.log('Tabelas criadas e horários disponíveis populados com sucesso.');
     } catch (error) {
         console.error('Erro ao conectar e sincronizar o banco de dados:', error);
     }
@@ -103,5 +145,6 @@ module.exports = {
     Barbeiros,
     Servicos,
     Agendamentos,
+    HorariosDisponiveis,
     syncDB
 };

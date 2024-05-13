@@ -9,13 +9,14 @@ const ejs = require('ejs');
 const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
 const path = require('path');
+const { Op } = require('sequelize');
 
 const app = express();
 const publicDir = require('path').join(__dirname, '/public');
 
 //banco
 const db = require('./db.js');
-const { Clientes, Barbeiros, Servicos, Agendamentos } = require('./db');
+const { Clientes, Barbeiros, Servicos, Agendamentos, HorariosDisponiveis } = require('./db');
 const { criarCliente } = require('./cliente.js');
 const { obterUidPorEmail } = require('./cliente');
 const { obterClientePorUid } = require('./cliente');
@@ -183,7 +184,7 @@ app.post('/login', async (req, res) => {
 app.get('/agenda', authenticateUser, async (req, res) => {
     try {
         const barbeiros = await Barbeiros.findAll();
-        const servicos = await Servicos.findAll(); // Presumindo que você também quer listar os serviços na mesma página
+        const servicos = await Servicos.findAll(); 
         res.render('agenda', { 
             userLogged: true, 
             barbeiros: barbeiros,
@@ -195,7 +196,6 @@ app.get('/agenda', authenticateUser, async (req, res) => {
     }
 });
 
-// Rota para adicionar um novo barbeiro
 app.post('/add-barbeiro', async (req, res) => {
     try {
         const { nome } = req.body;
@@ -207,7 +207,6 @@ app.post('/add-barbeiro', async (req, res) => {
     }
 });
 
-// Rota para adicionar um novo serviço
 app.post('/add-servico', async (req, res) => {
     try {
         const { descricao, duracao } = req.body;
@@ -257,6 +256,58 @@ app.post('/agendar', async (req, res) => {
         res.send('Este horário já está ocupado.');
     }
 });
+
+// Rota para obter os horários disponíveis
+app.get('/horarios-disponiveis', async (req, res) => {
+    const { date } = req.query; 
+    try {
+        const availableTimes = await getAvailableTimesForDate(date);
+        res.json(availableTimes);
+    } catch (error) {
+        console.error('Erro ao buscar horários disponíveis:', error);
+        res.status(500).send('Erro ao buscar horários disponíveis');
+    }
+});
+
+async function getAvailableTimesForDate(date) {
+    try {
+        const startOfDay = new Date(date);
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setDate(endOfDay.getDate() + 1);
+
+        const appointments = await Agendamentos.findAll({
+            where: {
+                dataHoraInicio: {
+                    [Op.gte]: startOfDay,
+                    [Op.lt]: endOfDay
+                }
+            },
+            include: [{ model: Servicos }]
+        });
+
+        const availableTimes = await HorariosDisponiveis.findAll();
+
+        const filteredTimes = availableTimes.filter(time => {
+            const startTime = new Date(`${date}T${time.horario}`);
+            const endTime = new Date(startTime.getTime() + (time.duracao * 60000));
+
+            return !appointments.some(appointment => {
+                const appointmentStart = new Date(appointment.dataHoraInicio);
+                const appointmentEnd = new Date(appointment.dataHoraFim);
+                return (
+                    (startTime >= appointmentStart && startTime < appointmentEnd) ||
+                    (endTime > appointmentStart && endTime <= appointmentEnd) ||
+                    (startTime <= appointmentStart && endTime >= appointmentEnd)
+                );
+            });
+        });
+
+        // Retorna apenas os horários disponíveis
+        return filteredTimes.map(time => time.horario);
+    } catch (error) {
+        throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
+    }
+}
 
 
 app.use((req, res) => {

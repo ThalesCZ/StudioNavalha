@@ -1,32 +1,286 @@
-<!-- views/agenda.ejs -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda da Barbearia</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agendamento Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:wght@200;400;700&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/agendamento.css">
+    <link href="https://cdn.jsdelivr.net/npm/pg-calendar@1.4.31/dist/css/pignose.calendar.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Agenda da Barbearia</h1>
-    <form action="/agendar" method="post">
-        <label for="barbeiro">Escolha o Barbeiro:</label>
-        <select name="barbeiroId" id="barbeiro">
-            <% barbeiros.forEach(barbeiro => { %>
-                <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
-            <% }); %>
-        </select>
+    <div class="topo">
+        <button id="menu-button" class="menu-button">☰</button>
+        <div class="menu-content">
+            <button class="return">VOLTAR PARA O INICIO</button>
+            <img class="logo" src="/images/logo.png" alt="Logo">
+            <button class="myagend">MEUS AGENDAMENTOS </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="left-panel">
+            <h1>Agende seu Horario Agora</h1>
+            <br>
+            <form action="/agendar" method="post">
+                <label for="barbeiro">Escolha o Barbeiro:</label>
+                <select name="barbeiroId" id="barbeiro">
+                    <% barbeiros.forEach(barbeiro => { %>
+                        <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                    <% }); %>
+                </select>
+        
+                <label for="servico">Escolha o Serviço:</label>
+                <select name="servicoId" id="servico">
+                    <% servicos.forEach(servico => { %>
+                        <option value="<%= servico.id %>"><%= servico.descricao %></option>
+                    <% }); %>
+                </select>
+                
+                <div class="right-panel">
+                    <div id="calendar-container">
+                        <div id="calendar-header">
+                            <button id="prev-month">&#10094;</button>
+                            <h2 id="month-year"></h2>
+                            <button id="next-month">&#10095;</button>
+                        </div>
+                        <table id="calendar">
+                            <thead>
+                                <tr>
+                                    <th>D</th>
+                                    <th>S</th>
+                                    <th>T</th>
+                                    <th>Q</th>
+                                    <th>Q</th>
+                                    <th>S</th>
+                                    <th>S</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendar-body">
+                            </tbody>
+                        </table>
+                    </div>
+                        <!-- Adicione esses elementos ao seu HTML -->
+                        <label for="appointment-date">Data:</label>
+                        <input type="date" id="appointment-date" class="form-control">
 
-        <label for="servico">Escolha o Serviço:</label>
-        <select name="servicoId" id="servico">
-            <% servicos.forEach(servico => { %>
-                <option value="<%= servico.id %>"><%= servico.descricao %></option>
-            <% }); %>
-        </select>
+                        <button id="open-time-picker">Selecionar Horário Disponível</button>
 
-        <label for="dataHora">Escolha o Horário:</label>
-        <input type="datetime-local" name="dataHora" id="dataHora" required>
+                        <label for="appointment-time">Horário:</label>
+                        <select id="time-options" name="appointment-time" class="form-control"></select>
 
-        <button type="submit">Agendar</button>
-    </form>
+                                        
+                            
+                        <input type="hidden" id="appointment-datetime" name="dataHora">
+
+                
+                <button type="submit" class="confirm">CONFIRMAR</button>
+            </form>
+        </div>
+        </div>
+    </div>
+    <input type="hidden" id="appointment-datetime" name="dataHora">
+    <button class="confirm">CONFIRMAR</button>
+    <script>
+        document.querySelector('.confirm').addEventListener('click', function() {
+    document.querySelector('form').submit(); // Garanta que o seletor 'form' aponte corretamente para o seu formulário
+});
+
+    </script>
+    <script>
+
+        function getHolidays(year) {
+            return [
+                new Date(year, 0, 1),  // Ano-Novo
+                new Date(year, 0, 1),  // Dia da Confraternização Universal
+                new Date(year, 1, 12), // Carnaval (segunda-feira)
+                new Date(year, 1, 13), // Carnaval (terça-feira)
+                new Date(year, 1, 14), // Quarta-feira de Cinzas (ponto facultativo até as 14h)
+                new Date(year, 2, 8),  // Dia Internacional da Mulher
+                new Date(year, 2, 29), // Sexta-feira Santa
+                new Date(year, 2, 31), // Páscoa
+                new Date(year, 3, 21), // Tiradentes
+                new Date(year, 4, 1),  // Dia do Trabalho
+                new Date(year, 4, 12), // Dia das Mães (segundo domingo de maio)
+                new Date(year, 4, 30), // Corpus Christi
+                new Date(year, 5, 31), // Ponto facultativo (dia seguinte ao Corpus Christi)
+                new Date(year, 7, 11), // Dia dos Pais (segundo domingo de agosto)
+                new Date(year, 8, 7),  // Independência do Brasil
+                new Date(year, 9, 12), // Nossa Senhora Aparecida
+                new Date(year, 9, 28), // Dia do Servidor Público
+                new Date(year, 10, 1), // Dia de Todos os Santos
+                new Date(year, 10, 2), // Finados
+                new Date(year, 10, 15),// Proclamação da República
+                new Date(year, 10, 20),// Dia Nacional da Consciência Negra
+                new Date(year, 11, 24),// Véspera de Natal (ponto facultativo após as 14h)
+                new Date(year, 11, 25),// Natal
+                new Date(year, 11, 31) // Véspera de Ano-Novo (ponto facultativo após as 14h)
+            ].map(date => date.toISOString().slice(0, 10));  // Convertendo para string de data
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const calendarBody = document.getElementById('calendar-body');
+    const monthYear = document.getElementById('month-year');
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let holidays = getHolidays(currentYear);
+    let selectedDate; // Variável para armazenar a data selecionada
+
+    function daysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function updateCalendar() {
+        calendarBody.innerHTML = '';
+        const days = daysInMonth(currentYear, currentMonth);
+        const firstDay = new Date(currentYear, currentMonth).getDay();
+
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            let row = document.createElement('tr');
+            for (let j = 0; j < 7; j++) {
+                let cell = document.createElement('td');
+                let currentDate = new Date(currentYear, currentMonth, date);
+                let dateString = currentDate.toISOString().slice(0, 10);
+
+                if (i === 0 && j < firstDay || date > days) {
+                    cell.appendChild(document.createTextNode(''));
+                } else {
+                    cell.appendChild(document.createTextNode(date));
+                    if (j === 0 || j === 6 || holidays.includes(dateString)) {
+                        cell.classList.add('disabled-day');
+                    } else {
+                        // Adicionar um event listener a cada dia clicável
+                        cell.addEventListener('click', function() {
+                            if (selectedDate) {
+                                selectedDate.classList.remove('selected-day');
+                            }
+                            selectedDate = cell;
+                            selectedDate.classList.add('selected-day');
+                            document.getElementById('appointment-date').value = dateString; // Atualiza o campo de data
+                            console.log("Selected Date:", dateString); // Log da data selecionada
+                        });
+                    }
+                    date++;
+                }
+                row.appendChild(cell);
+            }
+            calendarBody.appendChild(row);
+        }
+
+        monthYear.textContent = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    }
+
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        updateCalendar();
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        updateCalendar();
+    });
+
+    updateCalendar();
+});
+
+
+</script>
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const date = document.getElementById('appointment-date').value;
+        const time = document.getElementById('appointment-time').value;
+        if (date && time) {
+            const dateTime = date + 'T' + time; // Formato ISO 8601
+            document.getElementById('appointment-datetime').value = dateTime;
+        } else {
+            event.preventDefault(); // Impedir envio do formulário caso data ou hora não estejam selecionados
+            alert('Por favor, selecione data e horário.');
+        }
+    });
+</script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.getElementById('menu-button');
+        const topo = document.querySelector('.topo');
+
+        menuButton.addEventListener('click', function() {
+            topo.classList.toggle('active');
+        });
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const openTimePickerBtn = document.getElementById('open-time-picker');
+        const timeOptionsSelect = document.getElementById('time-options');
+        const appointmentDate = document.getElementById('appointment-date');
+    
+        openTimePickerBtn.addEventListener('click', async function(event) {
+            event.preventDefault();
+            const date = appointmentDate.value;
+            if (date) {
+                // Fazer requisição para obter os horários disponíveis
+                const response = await fetch(`/horarios-disponiveis?date=${date}`);
+                const times = await response.json();
+                // Limpar e atualizar o seletor de horários
+                timeOptionsSelect.innerHTML = '';
+                times.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeOptionsSelect.appendChild(option);
+                });
+            } else {
+                alert('Por favor, selecione uma data primeiro.');
+            }
+        });
+    });
+    </script>
+    
+    
+    <script>
+            confirmTimeBtn.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        const selectedTime = timeOptionsSelect.value;
+        const selectedDate = document.getElementById('appointment-date').value;
+        if (selectedDate && selectedTime) {
+            const dateTime = selectedDate + ' ' + selectedTime;
+            document.getElementById('appointment-datetime').value = dateTime; // Campo oculto que deve ser criado no formulário
+            console.log("Horário escolhido:", dateTime);
+            timePickerPopup.style.display = 'none';
+        }
+    });
+
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('time-options').value;
+            if (date && time) {
+                const dateTime = date + 'T' + time; // Formato ISO 8601
+                document.getElementById('appointment-datetime').value = dateTime;
+            } else {
+                event.preventDefault(); // Impedir envio do formulário caso data ou hora não estejam selecionados
+                alert('Por favor, selecione data e horário.');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
