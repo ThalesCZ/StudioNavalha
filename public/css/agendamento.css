@@ -40,12 +40,13 @@ body {
 }
 
 .right-panel {
-  background-color: #1e1414;
+  background-color: #ffffff;
   align-items: center;
   justify-content: center;
   display: flex;
   border-radius: 20px;
   flex: 1;
+  flex-direction: column;
 }
 
 .form-group {
