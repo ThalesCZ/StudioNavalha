@@ -263,11 +263,10 @@ app.post('/agendar', async (req, res) => {
 
 
 
-// Rota para obter os horários disponíveis
 app.get('/horarios-disponiveis', async (req, res) => {
-    const { date } = req.query; 
+    const { date, barbeiroId } = req.query; 
     try {
-        const availableTimes = await getAvailableDurationsForDate(date);
+        const availableTimes = await getAvailableDurationsForDate(date, barbeiroId);
         res.json(availableTimes);
     } catch (error) {
         console.error('Erro ao buscar horários disponíveis:', error);
@@ -275,7 +274,9 @@ app.get('/horarios-disponiveis', async (req, res) => {
     }
 });
 
-async function getAvailableDurationsForDate(date) {
+
+
+async function getAvailableDurationsForDate(date, barbeiroId) {
     try {
         const startOfDay = new Date(date);
         const endOfDay = new Date(startOfDay);
@@ -283,6 +284,7 @@ async function getAvailableDurationsForDate(date) {
 
         const appointments = await Agendamentos.findAll({
             where: {
+                barbeiroId,
                 dataHoraInicio: {
                     [Op.gte]: startOfDay,
                     [Op.lt]: endOfDay
@@ -321,6 +323,7 @@ async function getAvailableDurationsForDate(date) {
         throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
     }
 }
+
 
 
 // Este código deve ser executado como um script de migração ou diretamente em seu servidor de aplicativos durante a inicialização

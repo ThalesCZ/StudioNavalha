@@ -37,7 +37,7 @@
                 </div>
     
                 <div class="form-group">
-                    <label for="employee">Funcionário:</label>
+                    <label for="employee">Barbeiro:</label>
                     <select id="employee" name="barbeiroId" class="form-control">   
                         <% barbeiros.forEach(barbeiro => { %>
                             <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
@@ -85,12 +85,20 @@
         </div>
     </div>
 </div>
-    <script>
-        document.querySelector('.confirm').addEventListener('click', function() {
-    document.querySelector('form').submit(); // Garanta que o seletor 'form' aponte corretamente para o seu formulário
-});
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const date = document.getElementById('appointment-date').value;
+        const time = document.getElementById('time-options').value;
+        if (date && time) {
+            const dateTime = date + 'T' + time; // Formato ISO 8601
+            document.getElementById('appointment-datetime').value = dateTime;
+        } else {
+            event.preventDefault(); // Impedir envio do formulário caso data ou hora não estejam selecionados
+            alert('Por favor, selecione data e horário.');
+        }
+    });
+</script>
 
-    </script>
     <script>
 
         function getHolidays(year) {
@@ -164,7 +172,8 @@
                             selectedDate = cell;
                             selectedDate.classList.add('selected-day');
                             document.getElementById('appointment-date').value = dateString;
-                            updateAvailableTimes(dateString);
+                            const selectedBarberId = document.getElementById('employee').value;
+                            updateAvailableTimes(dateString, selectedBarberId); // Passa o ID do barbeiro selecionado
                         });
                     }
                     date++;
@@ -204,9 +213,9 @@ function hideLoadingIndicator() {
     document.getElementById('loading-indicator').style.display = 'none';
 }
 
-    async function updateAvailableTimes(date) {
+    async function updateAvailableTimes(date, barbeiroId) {
         showLoadingIndicator();
-        const response = await fetch(`/horarios-disponiveis?date=${date}`);
+        const response = await fetch(`/horarios-disponiveis?date=${date}&barbeiroId=${barbeiroId}`);
         const times = await response.json();
         const timeOptionsSelect = document.getElementById('time-options');
         timeOptionsSelect.innerHTML = '';
@@ -218,6 +227,7 @@ function hideLoadingIndicator() {
         });
         hideLoadingIndicator();
     }
+
 
     updateCalendar();
 });
@@ -293,21 +303,6 @@ function hideLoadingIndicator() {
         }
     });
 
-    </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('form').addEventListener('submit', function(event) {
-            const date = document.getElementById('appointment-date').value;
-            const time = document.getElementById('time-options').value;
-            if (date && time) {
-                const dateTime = date + 'T' + time; // Formato ISO 8601
-                document.getElementById('appointment-datetime').value = dateTime;
-            } else {
-                event.preventDefault(); // Impedir envio do formulário caso data ou hora não estejam selecionados
-                alert('Por favor, selecione data e horário.');
-            }
-        });
-    });
     </script>
 </body>
 </html>
