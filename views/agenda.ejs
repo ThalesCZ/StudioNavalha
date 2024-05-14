@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agendamento Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:wght@200;400;700&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/agendamento.css">
+    <link rel="stylesheet" href="css/agendamento.css">
     <link href="https://cdn.jsdelivr.net/npm/pg-calendar@1.4.31/dist/css/pignose.calendar.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,30 +16,35 @@
         <button id="menu-button" class="menu-button">☰</button>
         <div class="menu-content">
             <button class="return">VOLTAR PARA O INICIO</button>
-            <img class="logo" src="/images/logo.png" alt="Logo">
+            <img class="logo" src="images/logo.png" alt="Logo">
             <button class="myagend">MEUS AGENDAMENTOS </button>
         </div>
     </div>
     
     <div class="container">
         <div class="left-panel">
-            <h1>Agende seu Horario Agora</h1>
+            <h1>Agende seu Horário Agora</h1>
             <br>
             <form action="/agendar" method="post">
-                <label for="barbeiro">Escolha o Barbeiro:</label>
-                <select name="barbeiroId" id="barbeiro">
-                    <% barbeiros.forEach(barbeiro => { %>
-                        <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
-                    <% }); %>
-                </select>
-        
-                <label for="servico">Escolha o Serviço:</label>
-                <select name="servicoId" id="servico">
-                    <% servicos.forEach(servico => { %>
-                        <option value="<%= servico.id %>"><%= servico.descricao %></option>
-                    <% }); %>
-                </select>
-                
+                <div class="form-group">
+                    <label for="service">Por favor, selecione um serviço:</label>
+                    <select id="service" name="servicoId" class="form-control">
+                        
+                        <% servicos.forEach(servico => { %>
+                            <option value="<%= servico.id %>"><%= servico.descricao %></option>
+                        <% }); %>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="employee">Funcionário:</label>
+                    <select id="employee" name="barbeiroId" class="form-control">   
+                        <% barbeiros.forEach(barbeiro => { %>
+                            <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                        <% }); %>
+                    </select>
+                </div>
+    
                 <div class="right-panel">
                     <div id="calendar-container">
                         <div id="calendar-header">
@@ -63,27 +68,21 @@
                             </tbody>
                         </table>
                     </div>
-                        <!-- Adicione esses elementos ao seu HTML -->
-                        <label for="appointment-date">Data:</label>
-                        <input type="date" id="appointment-date" class="form-control">
+                    <label for="appointment-date">Data:</label>
+                    <input type="date" id="appointment-date" class="form-control">
 
-                        <button id="open-time-picker">Selecionar Horário Disponível</button>
+                    <button id="open-time-picker" type="button">Selecionar Horário Disponível</button>
 
-                        <label for="appointment-time">Horário:</label>
-                        <select id="time-options" name="appointment-time" class="form-control"></select>
+                    <label for="appointment-time">Horário:</label>
+                    <select id="time-options" name="appointment-time" class="form-control"></select>
 
-                                        
-                            
-                        <input type="hidden" id="appointment-datetime" name="dataHora">
+                    <input type="hidden" id="appointment-datetime" name="dataHora">
 
-                
-                <button type="submit" class="confirm">CONFIRMAR</button>
+                    <button type="submit" class="confirm">CONFIRMAR</button>
             </form>
         </div>
-        </div>
     </div>
-    <input type="hidden" id="appointment-datetime" name="dataHora">
-    <button class="confirm">CONFIRMAR</button>
+</div>
     <script>
         document.querySelector('.confirm').addEventListener('click', function() {
     document.querySelector('form').submit(); // Garanta que o seletor 'form' aponte corretamente para o seu formulário
@@ -118,7 +117,7 @@
                 new Date(year, 11, 24),// Véspera de Natal (ponto facultativo após as 14h)
                 new Date(year, 11, 25),// Natal
                 new Date(year, 11, 31) // Véspera de Ano-Novo (ponto facultativo após as 14h)
-            ].map(date => date.toISOString().slice(0, 10));  // Convertendo para string de data
+            ].map(date => date.toISOString().slice(0, 10));  
         }
 
         document.addEventListener('DOMContentLoaded', function() {
