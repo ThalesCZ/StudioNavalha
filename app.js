@@ -291,23 +291,50 @@ async function getAvailableTimesForDate(date) {
             const startTime = new Date(`${date}T${time.horario}`);
             const endTime = new Date(startTime.getTime() + (time.duracao * 60000));
 
+            // Verifica se o novo horário inicia ou termina durante outro agendamento
             return !appointments.some(appointment => {
                 const appointmentStart = new Date(appointment.dataHoraInicio);
                 const appointmentEnd = new Date(appointment.dataHoraFim);
+
                 return (
-                    (startTime >= appointmentStart && startTime < appointmentEnd) ||
+                    (startTime < appointmentEnd && startTime >= appointmentStart) ||
                     (endTime > appointmentStart && endTime <= appointmentEnd) ||
                     (startTime <= appointmentStart && endTime >= appointmentEnd)
                 );
             });
         });
 
-        // Retorna apenas os horários disponíveis
         return filteredTimes.map(time => time.horario);
     } catch (error) {
         throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
     }
 }
+
+// Este código deve ser executado como um script de migração ou diretamente em seu servidor de aplicativos durante a inicialização
+
+async function updateServiceDurations() {
+    try {
+        await Servicos.update({ duracao: 29 }, {
+            where: {
+                descricao: {
+                    [Op.or]: ['Corte', 'Hidratação']
+                }
+            }
+        });
+        await Servicos.update({ duracao: 59 }, {
+            where: {
+                descricao: {
+                    [Op.or]: ['Corte e Barba', 'Infantil']
+                }
+            }
+        });
+        console.log('Durações dos serviços atualizadas com sucesso.');
+    } catch (error) {
+        console.error('Erro ao atualizar as durações dos serviços:', error);
+    }
+}
+
+updateServiceDurations(); // Chamar essa função no ponto apropriado de sua aplicação
 
 
 app.use((req, res) => {
