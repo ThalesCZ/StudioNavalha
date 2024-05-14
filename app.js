@@ -222,21 +222,25 @@ app.post('/add-servico', async (req, res) => {
 app.post('/agendar', async (req, res) => {
     const { barbeiroId, servicoId, dataHora } = req.body;
     const servico = await Servicos.findByPk(servicoId);
+    
     const dataHoraInicio = new Date(dataHora);
+    // Configura dataHoraFim usando apenas a duração do serviço
     const dataHoraFim = new Date(dataHoraInicio.getTime() + servico.duracao * 60000);
 
     const conflito = await Agendamentos.findOne({
         where: {
             barbeiroId: barbeiroId,
-            [Sequelize.Op.or]: [
+            [Op.or]: [
                 {
                     dataHoraInicio: {
-                        [Sequelize.Op.between]: [dataHoraInicio, dataHoraFim]
+                        [Op.lt]: dataHoraFim,
+                        [Op.gte]: dataHoraInicio
                     }
                 },
                 {
                     dataHoraFim: {
-                        [Sequelize.Op.between]: [dataHoraInicio, dataHoraFim]
+                        [Op.gt]: dataHoraInicio,
+                        [Op.lte]: dataHoraFim
                     }
                 }
             ]
@@ -249,7 +253,7 @@ app.post('/agendar', async (req, res) => {
             servicoId,
             dataHoraInicio,
             dataHoraFim,
-            clienteUid: req.cookies['uid'] 
+            clienteUid: req.cookies['uid']
         });
         res.send('Agendamento confirmado!');
     } else {
@@ -257,11 +261,13 @@ app.post('/agendar', async (req, res) => {
     }
 });
 
+
+
 // Rota para obter os horários disponíveis
 app.get('/horarios-disponiveis', async (req, res) => {
     const { date } = req.query; 
     try {
-        const availableTimes = await getAvailableTimesForDate(date);
+        const availableTimes = await getAvailableDurationsForDate(date);
         res.json(availableTimes);
     } catch (error) {
         console.error('Erro ao buscar horários disponíveis:', error);
@@ -269,7 +275,7 @@ app.get('/horarios-disponiveis', async (req, res) => {
     }
 });
 
-async function getAvailableTimesForDate(date) {
+async function getAvailableDurationsForDate(date) {
     try {
         const startOfDay = new Date(date);
         const endOfDay = new Date(startOfDay);
@@ -287,12 +293,14 @@ async function getAvailableTimesForDate(date) {
 
         const availableTimes = await HorariosDisponiveis.findAll();
 
-        const filteredTimes = availableTimes.filter(time => {
+        const timeSet = new Set();  // Usando Set para evitar duplicatas
+
+        availableTimes.forEach(time => {
             const startTime = new Date(`${date}T${time.horario}`);
             const endTime = new Date(startTime.getTime() + (time.duracao * 60000));
 
             // Verifica se o novo horário inicia ou termina durante outro agendamento
-            return !appointments.some(appointment => {
+            const isAvailable = !appointments.some(appointment => {
                 const appointmentStart = new Date(appointment.dataHoraInicio);
                 const appointmentEnd = new Date(appointment.dataHoraFim);
 
@@ -302,13 +310,18 @@ async function getAvailableTimesForDate(date) {
                     (startTime <= appointmentStart && endTime >= appointmentEnd)
                 );
             });
+
+            if (isAvailable) {
+                timeSet.add(time.horario);  // Adiciona apenas horários disponíveis e não duplicados
+            }
         });
 
-        return filteredTimes.map(time => time.horario);
+        return Array.from(timeSet);  // Converte o Set em Array antes de retornar
     } catch (error) {
         throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
     }
 }
+
 
 // Este código deve ser executado como um script de migração ou diretamente em seu servidor de aplicativos durante a inicialização
 

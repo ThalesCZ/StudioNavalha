@@ -115,7 +115,7 @@ body {
 
 #calendar th, #calendar td {
   padding: 10px;
-  text-align: center; 
+  text-align: center;
 }
 
 #calendar th {
@@ -124,7 +124,8 @@ body {
 }
 
 #calendar td:hover {
-  background-color: #f0f0f0;
+  background-color: #169305; 
+  cursor: pointer; 
 }
 
 #prev-month, #next-month {
@@ -136,7 +137,7 @@ body {
 }
 
 .disabled-day {
-  background-color: #e0dddd;
+  background-color: #f89f9f;
   color: #7c0000;
   pointer-events: none; 
 }
@@ -158,6 +159,12 @@ body {
   transition: 0.2s;
 }
 
+.selected-day:hover{
+  background-color: #169305; 
+  color: rgb(255, 255, 255);
+  transition: 0.2s;
+}
+
 .confirm {
   width: 50%;
   padding: 10px 0;
@@ -168,6 +175,11 @@ body {
   cursor: pointer;
   text-align: center;
   margin-top: 15px;
+}
+
+.confirm:hover{
+  background-color: green;
+  transition: 0.2s;
 }
 
 @media (max-width: 748px ) {

@@ -48,9 +48,9 @@
                 <div class="right-panel">
                     <div id="calendar-container">
                         <div id="calendar-header">
-                            <button id="prev-month">&#10094;</button>
+                            <button id="prev-month" type="button">&#10094;</button>
                             <h2 id="month-year"></h2>
-                            <button id="next-month">&#10095;</button>
+                            <button id="next-month" type="button">&#10095;</button>
                         </div>
                         <table id="calendar">
                             <thead>
@@ -68,17 +68,19 @@
                             </tbody>
                         </table>
                     </div>
-                    <label for="appointment-date">Data:</label>
-                    <input type="date" id="appointment-date" class="form-control">
+                    <label for="appointment-date" style="margin-top: 1.2em;">Data:</label>
+                    <input type="string" id="appointment-date" class="form-control">
 
-                    <button id="open-time-picker" type="button">Selecionar Horário Disponível</button>
+                    <!-- <button id="open-time-picker" type="button">Atualizar Horário Disponível</button> -->
 
-                    <label for="appointment-time">Horário:</label>
+                    <label for="appointment-time" style="margin-top: 1.2em;">Horário:</label>
+                    <div id="loading-indicator" style="display: none; color: red;">Carregando horários...</div>
+
                     <select id="time-options" name="appointment-time" class="form-control"></select>
 
                     <input type="hidden" id="appointment-datetime" name="dataHora">
 
-                    <button type="submit" class="confirm">CONFIRMAR</button>
+                    <button type="submit" class="confirm">AGENDAR</button>
             </form>
         </div>
     </div>
@@ -123,10 +125,13 @@
         document.addEventListener('DOMContentLoaded', function() {
     const calendarBody = document.getElementById('calendar-body');
     const monthYear = document.getElementById('month-year');
+    const prevMonthButton = document.getElementById('prev-month');
+    const nextMonthButton = document.getElementById('next-month');
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
+    let today = new Date();
     let holidays = getHolidays(currentYear);
-    let selectedDate; // Variável para armazenar a data selecionada
+    let selectedDate;
 
     function daysInMonth(year, month) {
         return new Date(year, month + 1, 0).getDate();
@@ -152,15 +157,14 @@
                     if (j === 0 || j === 6 || holidays.includes(dateString)) {
                         cell.classList.add('disabled-day');
                     } else {
-                        // Adicionar um event listener a cada dia clicável
                         cell.addEventListener('click', function() {
                             if (selectedDate) {
                                 selectedDate.classList.remove('selected-day');
                             }
                             selectedDate = cell;
                             selectedDate.classList.add('selected-day');
-                            document.getElementById('appointment-date').value = dateString; // Atualiza o campo de data
-                            console.log("Selected Date:", dateString); // Log da data selecionada
+                            document.getElementById('appointment-date').value = dateString;
+                            updateAvailableTimes(dateString);
                         });
                     }
                     date++;
@@ -169,27 +173,51 @@
             }
             calendarBody.appendChild(row);
         }
-
         monthYear.textContent = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+        prevMonthButton.disabled = (currentYear <= today.getFullYear() && currentMonth <= today.getMonth());
     }
-
-    document.getElementById('prev-month').addEventListener('click', () => {
-        currentMonth--;
-        if (currentMonth < 0) {
+    prevMonthButton.addEventListener('click', () => {
+        if (currentMonth > 0) {
+            currentMonth--;
+        } else {
             currentMonth = 11;
             currentYear--;
         }
         updateCalendar();
     });
 
-    document.getElementById('next-month').addEventListener('click', () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        updateCalendar();
-    });
+document.getElementById('next-month').addEventListener('click', function(event) {
+    event.stopPropagation();
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    updateCalendar();
+});
+
+function showLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'block';
+}
+
+function hideLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'none';
+}
+
+    async function updateAvailableTimes(date) {
+        showLoadingIndicator();
+        const response = await fetch(`/horarios-disponiveis?date=${date}`);
+        const times = await response.json();
+        const timeOptionsSelect = document.getElementById('time-options');
+        timeOptionsSelect.innerHTML = '';
+        times.forEach(time => {
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = time;
+            timeOptionsSelect.appendChild(option);
+        });
+        hideLoadingIndicator();
+    }
 
     updateCalendar();
 });
