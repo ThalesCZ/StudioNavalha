@@ -261,8 +261,6 @@ app.post('/agendar', async (req, res) => {
     }
 });
 
-
-
 app.get('/horarios-disponiveis', async (req, res) => {
     const { date, barbeiroId } = req.query; 
     try {
@@ -273,8 +271,6 @@ app.get('/horarios-disponiveis', async (req, res) => {
         res.status(500).send('Erro ao buscar horários disponíveis');
     }
 });
-
-
 
 async function getAvailableDurationsForDate(date, barbeiroId) {
     try {
@@ -323,35 +319,6 @@ async function getAvailableDurationsForDate(date, barbeiroId) {
         throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
     }
 }
-
-
-
-// Este código deve ser executado como um script de migração ou diretamente em seu servidor de aplicativos durante a inicialização
-
-async function updateServiceDurations() {
-    try {
-        await Servicos.update({ duracao: 29 }, {
-            where: {
-                descricao: {
-                    [Op.or]: ['Corte', 'Hidratação']
-                }
-            }
-        });
-        await Servicos.update({ duracao: 59 }, {
-            where: {
-                descricao: {
-                    [Op.or]: ['Corte e Barba', 'Infantil']
-                }
-            }
-        });
-        console.log('Durações dos serviços atualizadas com sucesso.');
-    } catch (error) {
-        console.error('Erro ao atualizar as durações dos serviços:', error);
-    }
-}
-
-updateServiceDurations(); // Chamar essa função no ponto apropriado de sua aplicação
-
 
 app.use((req, res) => {
     res.redirect('/');
