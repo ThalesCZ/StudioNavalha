@@ -111,12 +111,6 @@ async function popularHorariosDisponiveis() {
     }
 }
 
-
-
-
-
-// Função para sincronizar o banco de dados
-// Função para sincronizar o banco de dados
 async function syncDB() {
     try {
         await sequelize.authenticate();
@@ -126,11 +120,8 @@ async function syncDB() {
         await Barbeiros.sync();
         await Servicos.sync();
         await Agendamentos.sync();
-        
-        // Sincronize também a tabela HorariosDisponiveis
         await HorariosDisponiveis.sync();
-
-        // Popule os horários disponíveis
+        
         await popularHorariosDisponiveis();
 
         console.log('Tabelas criadas e horários disponíveis populados com sucesso.');
