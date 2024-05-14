@@ -15,7 +15,7 @@
     <div class="topo">
         <button id="menu-button" class="menu-button">☰</button>
         <div class="menu-content">
-            <button class="return">VOLTAR PARA O INICIO</button>
+            <button class="return" id="back-to-home">VOLTAR PARA O INICIO</button>
             <img class="logo" src="images/logo.png" alt="Logo">
             <button class="myagend">MEUS AGENDAMENTOS </button>
         </div>
@@ -304,5 +304,14 @@ function hideLoadingIndicator() {
     });
 
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const backToHomeButton = document.getElementById('back-to-home');
+        backToHomeButton.addEventListener('click', function() {
+            window.location.href = '/';
+        });
+    });
+</script>
 </body>
 </html>

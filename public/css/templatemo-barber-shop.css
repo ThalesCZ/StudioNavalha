@@ -624,10 +624,7 @@ strong {
   border-radius: var(--border-radius-medium);
   padding: 65px;
 }
-.booking-form:hover{
-transition: all 0.3s;
-background-color: #ffffffc9;
-}
+
 
 .cor-titulo{
   color: #000000;
