@@ -85,8 +85,6 @@ const Agendamentos = sequelize.define('Agendamentos', {
     }
 });
 
-
-
 // Definição da tabela HorariosDisponiveis
 const HorariosDisponiveis = sequelize.define('HorariosDisponiveis', {
     horario: {

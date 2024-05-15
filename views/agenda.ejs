@@ -97,7 +97,7 @@
         const date = document.getElementById('appointment-date').value;
         const time = document.getElementById('time-options').value;
         if (date && time) {
-            const dateTime = date + 'T' + time; // Formato ISO 8601
+            const dateTime = date + 'T' + time;
             document.getElementById('appointment-datetime').value = dateTime;
         } else {
             event.preventDefault(); 
