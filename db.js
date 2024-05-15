@@ -47,8 +47,13 @@ const Servicos = sequelize.define('Servicos', {
     duracao: {
         type: DataTypes.INTEGER, 
         allowNull: false
+    },
+    preco: {
+        type: DataTypes.FLOAT,
+        allowNull: false
     }
 });
+
 
 // Definição da tabela Agendamentos
 const Agendamentos = sequelize.define('Agendamentos', {
@@ -80,6 +85,8 @@ const Agendamentos = sequelize.define('Agendamentos', {
     }
 });
 
+
+
 // Definição da tabela HorariosDisponiveis
 const HorariosDisponiveis = sequelize.define('HorariosDisponiveis', {
     horario: {
@@ -110,6 +117,12 @@ async function popularHorariosDisponiveis() {
         console.error('Erro ao popular os horários disponíveis:', error);
     }
 }
+
+Clientes.hasMany(Agendamentos, { foreignKey: 'clienteUid' });
+Agendamentos.belongsTo(Clientes, { foreignKey: 'clienteUid' });
+Barbeiros.hasMany(Agendamentos, { foreignKey: 'barbeiroId' });
+Agendamentos.belongsTo(Barbeiros, { foreignKey: 'barbeiroId' });
+
 
 async function syncDB() {
     try {

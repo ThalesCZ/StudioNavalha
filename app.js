@@ -17,9 +17,7 @@ const publicDir = require('path').join(__dirname, '/public');
 //banco
 const db = require('./db.js');
 const { Clientes, Barbeiros, Servicos, Agendamentos, HorariosDisponiveis } = require('./db');
-const { criarCliente } = require('./cliente.js');
-const { obterUidPorEmail } = require('./cliente');
-const { obterClientePorUid } = require('./cliente');
+const { criarCliente, obterUidPorEmail, obterClientePorUid, getAvailableDurationsForDate, carregarAgendamentos } = require('./cliente.js');
 
 app.use(cookieParser());
 
@@ -115,9 +113,77 @@ app.get('/login', (req, res) => {
     res.render('login', { signUpError: null, loginError: null });
 });
 
-app.get('/admin', authenticateAdmin, (req, res) => {
-    res.render('admin', { userLogged: true });
+app.get('/logout', (req, res) => {
+    res.clearCookie('userLogged');
+    res.redirect('/login');
 });
+
+app.get('/admin', authenticateAdmin, async (req, res) => {
+    try {
+        let barbeiroId = req.query.barbeiro;
+        if (!barbeiroId) {
+            const barbeiros = await Barbeiros.findAll();
+            if (barbeiros.length > 0) {
+                barbeiroId = barbeiros[0].id;
+            }
+        }
+        const agendamentos = await carregarAgendamentos(barbeiroId);
+        const barbeiros = await Barbeiros.findAll();
+        const servicos = await Servicos.findAll();
+        res.render('admin', { userLogged: true, servicos, barbeiros: barbeiros, agendamentos: agendamentos, selectedBarbeiroId: barbeiroId });
+    } catch (error) {
+        console.error('Erro ao carregar os serviços:', error);
+        res.status(500).send('Erro ao carregar a página de administração');
+    }
+});
+
+app.get('/agenda', authenticateUser, async (req, res) => {
+    try {
+        const barbeiros = await Barbeiros.findAll();
+        const servicos = await Servicos.findAll(); 
+        res.render('agenda', { 
+            userLogged: true, 
+            barbeiros: barbeiros,
+            servicos: servicos 
+        });
+    } catch (error) {
+        console.error('Erro ao carregar os dados para a agenda:', error);
+        res.status(500).send('Erro ao carregar a página de agenda');
+    }
+});
+
+app.get('/horarios-disponiveis', async (req, res) => {
+    const { date, barbeiroId } = req.query; 
+    try {
+        const availableTimes = await getAvailableDurationsForDate(date, barbeiroId);
+        res.json(availableTimes);
+    } catch (error) {
+        console.error('Erro ao buscar horários disponíveis:', error);
+        res.status(500).send('Erro ao buscar horários disponíveis');
+    }
+});
+
+app.post('/admin/select-barbeiro', authenticateAdmin, async (req, res) => {
+    try {
+        const { barbeiroId } = req.body;
+        res.redirect(`/admin?barbeiro=${barbeiroId}`);
+    } catch (error) {
+        console.error('Erro ao selecionar o barbeiro:', error);
+        res.status(500).send('Erro ao selecionar o barbeiro');
+    }
+});
+
+app.post('/excluir-agendamento', async (req, res) => {
+    try {
+        const { agendamentoId } = req.body;
+        await Agendamentos.destroy({ where: { id: agendamentoId } });
+        res.redirect('/admin'); // Redireciona de volta para a página de administração após a exclusão
+    } catch (error) {
+        console.error('Erro ao excluir agendamento:', error);
+        res.status(500).send('Erro ao excluir agendamento');
+    }
+});
+
 
 app.post('/createuser', async (req, res) => {
     try {
@@ -144,10 +210,7 @@ app.post('/createuser', async (req, res) => {
       }
     });
 
-app.get('/logout', (req, res) => {
-    res.clearCookie('userLogged');
-    res.redirect('/login');
-});
+
 
 app.post('/login', async (req, res) => {
     try {
@@ -181,21 +244,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/agenda', authenticateUser, async (req, res) => {
-    try {
-        const barbeiros = await Barbeiros.findAll();
-        const servicos = await Servicos.findAll(); 
-        res.render('agenda', { 
-            userLogged: true, 
-            barbeiros: barbeiros,
-            servicos: servicos 
-        });
-    } catch (error) {
-        console.error('Erro ao carregar os dados para a agenda:', error);
-        res.status(500).send('Erro ao carregar a página de agenda');
-    }
-});
-
 app.post('/add-barbeiro', async (req, res) => {
     try {
         const { nome } = req.body;
@@ -207,16 +255,40 @@ app.post('/add-barbeiro', async (req, res) => {
     }
 });
 
+app.post('/delete-barbeiro', async (req, res) => {
+    try {
+        const { barbeiroId } = req.body;
+        await Barbeiros.destroy({ where: { id: barbeiroId } });
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Erro ao excluir barbeiro:', error);
+        res.status(500).send('Erro ao excluir barbeiro');
+    }
+});
+
+
 app.post('/add-servico', async (req, res) => {
     try {
-        const { descricao, duracao } = req.body;
-        await Servicos.create({ descricao, duracao });
-        res.redirect('/admin'); 
+        const { descricao, duracao, preco } = req.body;
+        await Servicos.create({ descricao, duracao, preco });
+        res.redirect('/admin');
     } catch (error) {
         console.error('Erro ao adicionar serviço:', error);
         res.status(500).send('Erro ao adicionar serviço');
     }
 });
+
+app.post('/delete-barbeiro', async (req, res) => {
+    try {
+        const { barbeiroId } = req.body;
+        await Barbeiros.destroy({ where: { id: barbeiroId } });
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Erro ao excluir barbeiro:', error);
+        res.status(500).send('Erro ao excluir barbeiro');
+    }
+});
+
 
 
 app.post('/agendar', async (req, res) => {
@@ -260,65 +332,6 @@ app.post('/agendar', async (req, res) => {
         res.send('Este horário já está ocupado.');
     }
 });
-
-app.get('/horarios-disponiveis', async (req, res) => {
-    const { date, barbeiroId } = req.query; 
-    try {
-        const availableTimes = await getAvailableDurationsForDate(date, barbeiroId);
-        res.json(availableTimes);
-    } catch (error) {
-        console.error('Erro ao buscar horários disponíveis:', error);
-        res.status(500).send('Erro ao buscar horários disponíveis');
-    }
-});
-
-async function getAvailableDurationsForDate(date, barbeiroId) {
-    try {
-        const startOfDay = new Date(date);
-        const endOfDay = new Date(startOfDay);
-        endOfDay.setDate(endOfDay.getDate() + 1);
-
-        const appointments = await Agendamentos.findAll({
-            where: {
-                barbeiroId,
-                dataHoraInicio: {
-                    [Op.gte]: startOfDay,
-                    [Op.lt]: endOfDay
-                }
-            },
-            include: [{ model: Servicos }]
-        });
-
-        const availableTimes = await HorariosDisponiveis.findAll();
-
-        const timeSet = new Set();  // Usando Set para evitar duplicatas
-
-        availableTimes.forEach(time => {
-            const startTime = new Date(`${date}T${time.horario}`);
-            const endTime = new Date(startTime.getTime() + (time.duracao * 60000));
-
-            // Verifica se o novo horário inicia ou termina durante outro agendamento
-            const isAvailable = !appointments.some(appointment => {
-                const appointmentStart = new Date(appointment.dataHoraInicio);
-                const appointmentEnd = new Date(appointment.dataHoraFim);
-
-                return (
-                    (startTime < appointmentEnd && startTime >= appointmentStart) ||
-                    (endTime > appointmentStart && endTime <= appointmentEnd) ||
-                    (startTime <= appointmentStart && endTime >= appointmentEnd)
-                );
-            });
-
-            if (isAvailable) {
-                timeSet.add(time.horario);  // Adiciona apenas horários disponíveis e não duplicados
-            }
-        });
-
-        return Array.from(timeSet);  // Converte o Set em Array antes de retornar
-    } catch (error) {
-        throw new Error('Erro ao buscar horários disponíveis: ' + error.message);
-    }
-}
 
 app.use((req, res) => {
     res.redirect('/');

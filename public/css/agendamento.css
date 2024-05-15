@@ -166,7 +166,7 @@ body {
 }
 
 .confirm {
-  width: 50%;
+  width: 30%;
   padding: 10px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -174,7 +174,7 @@ body {
   color: white;
   cursor: pointer;
   text-align: center;
-  margin-top: 15px;
+  margin-top: 1.3em;
 }
 
 .confirm:hover{
@@ -451,4 +451,10 @@ body {
 }
 .appointment-date{
   width: 25%;
+}
+
+.dia-bugado{
+  background-color: #ffffff;
+  color: #ffffff;
+  pointer-events: none; 
 }

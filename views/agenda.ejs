@@ -24,7 +24,14 @@
     <div class="container">
         <div class="left-panel">
             <h1>Agende seu Horário Agora</h1>
-            <br>
+            <h2 style="margin-top: 0; margin-bottom: 0;">Serviços Disponíveis</h2>
+                <ul>
+                    <% servicos.forEach(servico => { %>
+                        <li>
+                            <%= servico.descricao %> - <%= servico.duracao %> minutos - R$ <%= servico.preco %>
+                        </li>
+                    <% }); %>
+                </ul>
             <form action="/agendar" method="post">
                 <div class="form-group">
                     <label for="service">Por favor, selecione um serviço:</label>
@@ -69,7 +76,7 @@
                         </table>
                     </div>
                     <label for="appointment-date" style="margin-top: 1.2em;">Data:</label>
-                    <input type="string" id="appointment-date" class="form-control">
+                    <input type="string" id="appointment-date" class="form-control" style="cursor: not-allowed;" readonly>
 
                     <!-- <button id="open-time-picker" type="button">Atualizar Horário Disponível</button> -->
 
@@ -93,7 +100,7 @@
             const dateTime = date + 'T' + time; // Formato ISO 8601
             document.getElementById('appointment-datetime').value = dateTime;
         } else {
-            event.preventDefault(); // Impedir envio do formulário caso data ou hora não estejam selecionados
+            event.preventDefault(); 
             alert('Por favor, selecione data e horário.');
         }
     });
@@ -158,8 +165,9 @@
                 let currentDate = new Date(currentYear, currentMonth, date);
                 let dateString = currentDate.toISOString().slice(0, 10);
 
-                if (i === 0 && j < firstDay || date > days) {
+                if (i === 0 && j < firstDay || date > days) { 
                     cell.appendChild(document.createTextNode(''));
+                    cell.classList.add('dia-bugado'); 
                 } else {
                     cell.appendChild(document.createTextNode(date));
                     if (j === 0 || j === 6 || holidays.includes(dateString)) {
@@ -305,13 +313,13 @@ function hideLoadingIndicator() {
 
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const backToHomeButton = document.getElementById('back-to-home');
-        backToHomeButton.addEventListener('click', function() {
-            window.location.href = '/';
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backToHomeButton = document.getElementById('back-to-home');
+            backToHomeButton.addEventListener('click', function() {
+                window.location.href = '/';
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
