@@ -3,19 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <title>Painel Administrativo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #343a40;
+        }
+
+        h2 {
+            color: #495057;
+        }
+
+        hr {
+            width: 100%;
+            border: 0;
+            height: 2px;
+            background-color: rgb(0, 0, 0);
+            margin: 20px 0;
+        }
+        .form1 {
+            background-color: #ffffff;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ffffff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px 0;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                padding: 10px;
+            }
+
+            form {
+                padding: 15px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            button {
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            form {
+                padding: 10px;
+            }
+
+            label, input[type="text"], input[type="number"], select {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+
+            button {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            li form {
+                width: 100%;
+                text-align: right;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Painel Administrativo</h1>
 
     <h2>Adicionar Barbeiro</h2>
-    <form action="/add-barbeiro" method="post">
+    <form class="form1" action="/add-barbeiro" method="post">
         <label for="nomeBarbeiro">Nome do Barbeiro:</label>
         <input type="text" id="nomeBarbeiro" name="nome" required>
-        <button type="submit">Adicionar</button>
+        <div class="center-button">
+            <button type="submit">Adicionar</button>
+        </div>
     </form>
-
+<hr>
     <h2>Adicionar Serviço</h2>
-    <form action="/add-servico" method="post">
+    <form class="form1" action="/add-servico" method="post">
         <label for="descricaoServico">Descrição do Serviço:</label>
         <input type="text" id="descricaoServico" name="descricao" required>
 
@@ -25,8 +204,11 @@
         <label for="precoServico">Preço do Serviço:</label>
         <input type="number" step="0.01" id="precoServico" name="preco" required>
 
-        <button type="submit">Adicionar</button>
+        <div class="center-button">
+            <button type="submit">Adicionar</button>
+        </div>
     </form>
+    <hr>
 
     <h2>Serviços Existentes</h2>
     <ul>
@@ -36,7 +218,7 @@
                     <%= servico.descricao %> - Duração: <%= servico.duracao %> minutos - Preço: R$ <%= servico.preco.toFixed(2) %>
                     <form action="/delete-servico" method="post" style="display:inline;">
                         <input type="hidden" name="id" value="<%= servico.id %>">
-                        <button type="submit">Excluir</button>
+                        <button type="submit" style="margin-left: 20px;">Excluir</button>
                     </form>
                 </li>
             <% }) %>
@@ -44,84 +226,67 @@
             <li>Nenhum serviço cadastrado.</li>
         <% } %>
     </ul>
+    <hr>
 
     <h2>Excluir Barbeiro</h2>
-    <form action="/delete-barbeiro" method="post">
+    <form class="form1" action="/delete-barbeiro" method="post">
         <label for="barbeiroId">Selecione o Barbeiro:</label>
         <select id="barbeiroId" name="barbeiroId" required>
             <% barbeiros.forEach(barbeiro => { %>
                 <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
             <% }); %>
         </select>
-        <button type="submit">Excluir</button>
+        <div class="center-button">
+            <button type="submit">Excluir</button>
+        </div>
     </form>
+<hr>
     
     <h2>Agendamentos</h2>
-
-    <form action="/admin/select-barbeiro" method="post">
+    <form class="form1" action="/admin/select-barbeiro" method="post">
         <label for="barbeiroId">Selecione o Barbeiro:</label>
         <select id="barbeiroId" name="barbeiroId" required>
             <% barbeiros.forEach(barbeiro => { %>
                 <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
             <% }); %>
         </select>
-        <button type="submit">Verificar</button>
+        <div class="center-button">
+            <button type="submit">Atualizar</button>
+        </div>
     </form>
     
-
-    <style>
-        /* Estilos para a tabela */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-    
-        th, td {
-            border: 1px solid #dddddd;
-            padding: 8px;
-            text-align: left;
-        }
-    
-        th {
-            background-color: #f2f2f2;
-        }
-    
-        /* Estilos para as linhas pares da tabela */
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Barbeiro</th>
-                <th>Dia</th>
-                <th>Horário</th>
-                <th>Cliente</th>
-                <th>Serviço</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% agendamentos.forEach(agendamento => { %>
+    <div class="table-container">
+        <table>
+            <thead>
                 <tr>
-                    <td><%= agendamento.Barbeiro ? agendamento.Barbeiro.nome : 'Nome do Barbeiro não disponível' %></td>
-                    <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleDateString() : 'Data/Hora de Início não disponível' %></td>
-                    <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleTimeString() : 'Data/Hora de Início não disponível' %></td>
-                    <td><%= agendamento.Cliente ? agendamento.Cliente.nome : 'Nome do Cliente não disponível' %></td>
-                    <td><%= agendamento.Servico ? agendamento.Servico.descricao : 'Serviço não disponível' %></td>
-                    <td>
-                        <form action="/excluir-agendamento" method="post">
-                            <input type="hidden" name="agendamentoId" value="<%= agendamento.id %>">
-                            <button type="submit">Excluir</button>
-                        </form>
-                    </td>
+                    <th>Barbeiro</th>
+                    <th>Dia</th>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th></th>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
-    
-
-
+            </thead>
+            <tbody>
+                <% agendamentos.forEach(agendamento => { %>
+                    <tr>
+                        <td><%= agendamento.Barbeiro ? agendamento.Barbeiro.nome : 'Nome do Barbeiro não disponível' %></td>
+                        <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleDateString() : 'Data/Hora de Início não disponível' %></td>
+                        <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleTimeString() : 'Data/Hora de Início não disponível' %></td>
+                        <td><%= agendamento.Cliente ? agendamento.Cliente.nome : 'Nome do Cliente não disponível' %></td>
+                        <td><%= agendamento.Servico ? agendamento.Servico.descricao : 'Serviço não disponível' %></td>
+                        <td style="display: flex; justify-content: center;">
+                            <form action="/excluir-agendamento" method="post" style="display:inline;">
+                                <input type="hidden" name="agendamentoId" value="<%= agendamento.id %>">
+                                <div class="">
+                                    <button type="submit">Excluir</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
