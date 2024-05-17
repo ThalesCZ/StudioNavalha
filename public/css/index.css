@@ -165,7 +165,6 @@ strong {
   CUSTOM BLOCK BACKGROUND OVERLAY               
 -----------------------------------------*/
 .custom-block-bg-overlay-wrap {
-  background: var(--primary-color);
   border-radius: var(--border-radius-medium);
   transition: all 0.3s ease;
 }
@@ -969,4 +968,34 @@ strong {
 .btn-agenda:hover {
   background-color: #f73535; /* altera a cor de fundo quando passa o mouse */
   color: black;
+}
+
+.barbeiro{
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+}
+
+.highlight {
+  background-color: rgb(0, 0, 0);
+  border-radius: 5px;
+  color: white;
+  padding: 0 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  font-weight: bold;
+  position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.highlight::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 }
