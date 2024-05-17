@@ -119,8 +119,8 @@
                 <% agendamentos.forEach(agendamento => { %>
                     <tr>
                         <td><%= agendamento.Barbeiro ? agendamento.Barbeiro.nome : 'Nome do Barbeiro não disponível' %></td>
-                        <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleDateString() : 'Data/Hora de Início não disponível' %></td>
-                        <td><%= agendamento.dataHoraInicio ? agendamento.dataHoraInicio.toLocaleTimeString() : 'Data/Hora de Início não disponível' %></td>
+                        <td><%= agendamento.dataHoraInicio ? new Date(agendamento.dataHoraInicio).toLocaleDateString('pt-BR') : 'Data/Hora de Início não disponível' %></td>
+                        <td><%= agendamento.dataHoraInicio ? new Date(agendamento.dataHoraInicio).toLocaleTimeString('pt-BR') : 'Data/Hora de Início não disponível' %></td>
                         <td><%= agendamento.Cliente ? agendamento.Cliente.nome : 'Nome do Cliente não disponível' %></td>
                         <td><%= agendamento.Servico ? agendamento.Servico.descricao : 'Serviço não disponível' %></td>
                         <td style="display: flex; justify-content: center;">

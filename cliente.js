@@ -48,8 +48,7 @@ async function carregarAgendamentos(barbeiroId) {
               { model: Servicos }
           ],
           order: [
-              ['dataHoraInicio', 'ASC'], // Ordena por dataHoraInicio em ordem decrescente (mais atual primeiro)
-              ['dataHoraInicio', 'ASC']   // Em caso de datas iguais, ordena por dataHoraInicio em ordem crescente (mais cedo primeiro)
+              ['dataHoraInicio', 'ASC'],
           ]
       });
   } catch (error) {
