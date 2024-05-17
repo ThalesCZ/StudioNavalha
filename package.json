@@ -1,13 +1,13 @@
 {
   "name": "studionavalha",
   "version": "1.0.0",
-  "description": "",
+  "description": "Descrição do seu projeto",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Seu Nome",
   "license": "ISC",
   "dependencies": {
     "@vercel/postgres": "^0.8.0",
@@ -21,9 +21,11 @@
     "firebase": "^8.6.8",
     "firebase-admin": "^12.0.0",
     "jquery": "^3.7.1",
-    "nodemon": "^3.1.0",
     "pg": "^8.11.5",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
