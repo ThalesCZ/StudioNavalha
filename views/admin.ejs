@@ -19,6 +19,18 @@
 <body>
     <h1>Painel Administrativo</h1>
 
+    <% if (message) { %>
+        <div class="alert alert-success">
+            <%= message %>
+        </div>
+    <% } %>
+
+    <% if (errorMessage) { %>
+        <div class="alert alert-danger">
+            <%= errorMessage %>
+        </div>
+    <% } %>
+    
     <h2>Adicionar Barbeiro</h2>
     <form class="form1" action="/add-barbeiro" method="post">
         <label for="nomeBarbeiro">Nome do Barbeiro:</label>
@@ -62,6 +74,7 @@
         <% } %>
     </ul>
     <hr>
+    
 
     <h2>Excluir Barbeiro</h2>
     <form class="form1" action="/delete-barbeiro" method="post">
@@ -82,7 +95,7 @@
         <label for="barbeiroId">Selecione o Barbeiro:</label>
         <select id="barbeiroId" name="barbeiroId" required>
             <% barbeiros.forEach(barbeiro => { %>
-                <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
+                <option value="<%= barbeiro.id %>" <%= barbeiro.id === selectedBarbeiroId ? 'selected' : '' %>><%= barbeiro.nome %></option>
             <% }); %>
         </select>
         <div class="center-button">

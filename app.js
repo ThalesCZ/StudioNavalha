@@ -121,16 +121,26 @@ app.get('/logout', (req, res) => {
 app.get('/admin', authenticateAdmin, async (req, res) => {
     try {
         let barbeiroId = req.query.barbeiro;
-        if (!barbeiroId) {
-            const barbeiros = await Barbeiros.findAll();
-            if (barbeiros.length > 0) {
-                barbeiroId = barbeiros[0].id;
-            }
-        }
-        const agendamentos = await carregarAgendamentos(barbeiroId);
         const barbeiros = await Barbeiros.findAll();
+
+        if (!barbeiroId && barbeiros.length > 0) {
+            barbeiroId = barbeiros[0].id;
+        }
+
+        const agendamentos = await carregarAgendamentos(barbeiroId);
         const servicos = await Servicos.findAll();
-        res.render('admin', { userLogged: true, servicos, barbeiros: barbeiros, agendamentos: agendamentos, selectedBarbeiroId: barbeiroId });
+        const message = req.query.message;
+        const errorMessage = req.query.errorMessage;
+
+        res.render('admin', { 
+            userLogged: true, 
+            servicos, 
+            barbeiros, 
+            agendamentos, 
+            selectedBarbeiroId: parseInt(barbeiroId, 10), // Transforma em int para ajeitar o select
+            message, 
+            errorMessage 
+        });
     } catch (error) {
         console.error('Erro ao carregar os serviços:', error);
         res.status(500).send('Erro ao carregar a página de administração');
@@ -152,7 +162,7 @@ app.get('/agenda', authenticateUser, async (req, res) => {
     }
 });
 
-app.get('/horarios-disponiveis', async (req, res) => {
+app.get('/horarios-disponiveis', authenticateUser, async (req, res) => {
     const { date, barbeiroId } = req.query; 
     try {
         const availableTimes = await getAvailableDurationsForDate(date, barbeiroId);
@@ -177,13 +187,12 @@ app.post('/excluir-agendamento', authenticateAdmin, async (req, res) => {
     try {
         const { agendamentoId } = req.body;
         await Agendamentos.destroy({ where: { id: agendamentoId } });
-        res.redirect('/admin'); // Redireciona de volta para a página de administração após a exclusão
+        res.redirect('/admin?message=Agendamento excluído com sucesso');
     } catch (error) {
         console.error('Erro ao excluir agendamento:', error);
         res.status(500).send('Erro ao excluir agendamento');
     }
 });
-
 
 app.post('/createuser', async (req, res) => {
     try {
@@ -248,7 +257,7 @@ app.post('/add-barbeiro', authenticateAdmin, async (req, res) => {
     try {
         const { nome } = req.body;
         await Barbeiros.create({ nome });
-        res.redirect('/admin'); 
+        res.redirect('/admin?message=Barbeiro adicionado com sucesso');
     } catch (error) {
         console.error('Erro ao adicionar barbeiro:', error);
         res.status(500).send('Erro ao adicionar barbeiro');
@@ -259,37 +268,34 @@ app.post('/delete-barbeiro', authenticateAdmin, async (req, res) => {
     try {
         const { barbeiroId } = req.body;
         await Barbeiros.destroy({ where: { id: barbeiroId } });
-        res.redirect('/admin');
+        res.redirect(`/admin?message=Barbeiro excluído com sucesso`);
     } catch (error) {
         console.error('Erro ao excluir barbeiro:', error);
-        res.status(500).send('Erro ao excluir barbeiro');
+        res.redirect(`/admin?errorMessage=Exclua todos os agendamentos relacionados a este serviço antes!`);
     }
 });
-
 
 app.post('/add-servico', authenticateAdmin, async (req, res) => {
     try {
         const { descricao, duracao, preco } = req.body;
         await Servicos.create({ descricao, duracao, preco });
-        res.redirect('/admin');
+        res.redirect('/admin?message=Serviço adicionado com sucesso');
     } catch (error) {
         console.error('Erro ao adicionar serviço:', error);
         res.status(500).send('Erro ao adicionar serviço');
     }
 });
 
-app.post('/delete-barbeiro', authenticateAdmin, async (req, res) => {
+app.post('/delete-servico', authenticateAdmin, async (req, res) => {
     try {
-        const { barbeiroId } = req.body;
-        await Barbeiros.destroy({ where: { id: barbeiroId } });
+        const { id } = req.body;
+        await Servicos.destroy({ where: { id: id } });
         res.redirect('/admin');
     } catch (error) {
-        console.error('Erro ao excluir barbeiro:', error);
-        res.status(500).send('Erro ao excluir barbeiro');
+        console.error('Erro ao excluir serviço:', error);
+        res.redirect('/admin?errorMessage=Exclua todos os agendamentos relacionados a este serviço antes!');
     }
 });
-
-
 
 app.post('/agendar', async (req, res) => {
     const { barbeiroId, servicoId, dataHora } = req.body;
