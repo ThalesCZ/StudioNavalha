@@ -173,7 +173,7 @@ app.post('/admin/select-barbeiro', authenticateAdmin, async (req, res) => {
     }
 });
 
-app.post('/excluir-agendamento', async (req, res) => {
+app.post('/excluir-agendamento', authenticateAdmin, async (req, res) => {
     try {
         const { agendamentoId } = req.body;
         await Agendamentos.destroy({ where: { id: agendamentoId } });
@@ -244,7 +244,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/add-barbeiro', async (req, res) => {
+app.post('/add-barbeiro', authenticateAdmin, async (req, res) => {
     try {
         const { nome } = req.body;
         await Barbeiros.create({ nome });
@@ -255,7 +255,7 @@ app.post('/add-barbeiro', async (req, res) => {
     }
 });
 
-app.post('/delete-barbeiro', async (req, res) => {
+app.post('/delete-barbeiro', authenticateAdmin, async (req, res) => {
     try {
         const { barbeiroId } = req.body;
         await Barbeiros.destroy({ where: { id: barbeiroId } });
@@ -267,7 +267,7 @@ app.post('/delete-barbeiro', async (req, res) => {
 });
 
 
-app.post('/add-servico', async (req, res) => {
+app.post('/add-servico', authenticateAdmin, async (req, res) => {
     try {
         const { descricao, duracao, preco } = req.body;
         await Servicos.create({ descricao, duracao, preco });
@@ -278,7 +278,7 @@ app.post('/add-servico', async (req, res) => {
     }
 });
 
-app.post('/delete-barbeiro', async (req, res) => {
+app.post('/delete-barbeiro', authenticateAdmin, async (req, res) => {
     try {
         const { barbeiroId } = req.body;
         await Barbeiros.destroy({ where: { id: barbeiroId } });
