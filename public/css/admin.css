@@ -35,10 +35,32 @@ body {
     background-color: var(--white-color);
     font-family: var(--body-font-family);
     margin: 0;
-    padding: 20px;
-    display: flex;
     flex-direction: column;
     align-items: center;
+}
+.body_02{
+    padding: 5px;
+    display: flex;
+    background-color: var(--white-color);
+    font-family: var(--body-font-family);
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: var(--h1-font-size);
 }
 
 h1 {

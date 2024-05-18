@@ -1,15 +1,4 @@
-/*
 
-TemplateMo 585 Barber Shop
-
-https://templatemo.com/tm-585-barber-shop
-
-*/
-
-
-/*---------------------------------------
-  CUSTOM PROPERTIES ( VARIABLES )             
------------------------------------------*/
 :root {
   --white-color:                  #fff5f5;
   --white-transparent: rgba(255, 255, 255, 0.5);
@@ -142,7 +131,7 @@ strong {
 }
 
 .section-overlay {
-  background-color: var(--dark-color);
+  background-color: var(--primary-color);
   position: absolute;
   top: 0;
   left: 0;
@@ -473,17 +462,12 @@ strong {
 
 
 .featured-section h2 {
-  color: var(--secondary-color);
-  text-shadow:
-  -0.5px -0.5px 0 #fff,  
-   0.5px -0.5px 0 #fff,
-  -0.5px  0.5px 0 #fff,
-   0.5px  0.5px 0 #fff;
-   ;
+  color: red;
+  
 }
 
 .featured-section p {
-  color: var(--white-color);
+  color: white;
   text-shadow:
   -0.5px -0.5px 0 #000000,  
    0.5px -0.5px 0 #000000,
@@ -648,13 +632,13 @@ strong {
 .contact-block {
   background: var(--secondary-color);
   border-radius: var(--border-radius-medium);
-  transform: rotate(8deg);
+  transform: rotate(0deg);
   height: 100%;
   padding: 20px 40px;
 }
 
 .contact-block h6 {
-  transform: rotate(-8deg);
+  transform: rotate(0deg);
 }
 
 .contact-block .custom-icon {
@@ -724,7 +708,7 @@ strong {
 
 .site-footer::after {
   content: "";
-  background: linear-gradient(90deg, #FDBB2D 0%, #22C1C3 100%);
+  background: linear-gradient(90deg, #000000 0%, #691b03 100%);
   position: absolute;
   right: 0;
   bottom: 0;
@@ -957,8 +941,8 @@ strong {
 .btn-agenda {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #ff0000; /* cor de fundo */
-  color: #fff; /* cor do texto */
+  background-color: #ff0000; 
+  color: #fff; 
   text-decoration: none;
   border: none;
   border-radius: 5px;
@@ -966,7 +950,7 @@ strong {
 }
 
 .btn-agenda:hover {
-  background-color: #f73535; /* altera a cor de fundo quando passa o mouse */
+  background-color: #f73535; 
   color: black;
 }
 
@@ -998,4 +982,8 @@ strong {
   height: 50%;
   background: rgba(0, 0, 0, 0.5);
   z-index: -1;
+}
+
+.text-center{
+color: #fff;
 }

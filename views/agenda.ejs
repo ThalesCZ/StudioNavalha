@@ -28,13 +28,13 @@
                 <ul>
                     <% servicos.forEach(servico => { %>
                         <li>
-                            <%= servico.descricao %> - <%= servico.duracao %> minutos - R$ <%= servico.preco %>
+                            <%= servico.descricao %> - <%= servico.duracao %> minutos - R$ <%= servico.preco.toFixed(2) %>
                         </li>
                     <% }); %>
                 </ul>
             <form action="/agendar" method="post">
                 <div class="form-group">
-                    <label for="service">Por favor, selecione um serviço:</label>
+                    <label for="service">Selecione um serviço:</label>
                     <select id="service" name="servicoId" class="form-control">
                         
                         <% servicos.forEach(servico => { %>
@@ -44,7 +44,7 @@
                 </div>
     
                 <div class="form-group">
-                    <label for="employee">Barbeiro:</label>
+                    <label for="employee">Selecione um Barbeiro:</label>
                     <select id="employee" name="barbeiroId" class="form-control">   
                         <% barbeiros.forEach(barbeiro => { %>
                             <option value="<%= barbeiro.id %>"><%= barbeiro.nome %></option>
