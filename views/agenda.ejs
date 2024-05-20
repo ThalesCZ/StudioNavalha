@@ -88,23 +88,25 @@
                     <input type="hidden" id="appointment-datetime" name="dataHora">
 
                     <button type="submit" class="confirm">AGENDAR</button>
+                    <!-- Modal de Confirmação -->
+                    <div id="confirmation-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Confirmar Agendamento</h2>
+                            <p>Você escolheu:</p>
+                            <p id="confirmation-service"></p>
+                            <p id="confirmation-barber"></p>
+                            <p id="confirmation-date-time"></p>
+                            <button id="confirm-button">Confirmar</button>
+                            <button id="cancel-button">Cancelar</button>
+                        </div>
+                    </div>
+
             </form>
         </div>
     </div>
 </div>
-<script>
-    document.querySelector('form').addEventListener('submit', function(event) {
-        const date = document.getElementById('appointment-date').value;
-        const time = document.getElementById('time-options').value;
-        if (date && time) {
-            const dateTime = date + 'T' + time;
-            document.getElementById('appointment-datetime').value = dateTime;
-        } else {
-            event.preventDefault(); 
-            alert('Por favor, selecione data e horário.');
-        }
-    });
-</script>
+
 
     <script>
 
@@ -170,9 +172,10 @@
                     cell.classList.add('dia-bugado'); 
                 } else {
                     cell.appendChild(document.createTextNode(date));
-                    if (j === 0 || j === 6 || holidays.includes(dateString)) {
-                        cell.classList.add('disabled-day');
-                    } else {
+                    if (j === 0 || j === 6 || holidays.includes(dateString) || (currentDate < today && currentDate.toDateString() !== today.toDateString())) {
+                    cell.classList.add('disabled-day');
+                }
+                    else {
                         cell.addEventListener('click', function() {
                             if (selectedDate) {
                                 selectedDate.classList.remove('selected-day');
@@ -320,6 +323,63 @@ function hideLoadingIndicator() {
                 window.location.href = '/';
             });
         });
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const modal = document.getElementById('confirmation-modal');
+    const closeButton = document.querySelector('.close');
+    const confirmButton = document.getElementById('confirm-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const confirmationService = document.getElementById('confirmation-service');
+    const confirmationBarber = document.getElementById('confirmation-barber');
+    const confirmationDateTime = document.getElementById('confirmation-date-time');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Impede o envio imediato do formulário
+
+        const serviceSelect = document.getElementById('service');
+        const barberSelect = document.getElementById('employee');
+        const date = document.getElementById('appointment-date').value;
+        const time = document.getElementById('time-options').value;
+
+        if (serviceSelect.value && barberSelect.value && date && time) {
+            const serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
+            const barberName = barberSelect.options[barberSelect.selectedIndex].text;
+            const dateTime = date + 'T' + time;
+
+            confirmationService.textContent = `Serviço: ${serviceName}`;
+            confirmationBarber.textContent = `Barbeiro: ${barberName}`;
+            confirmationDateTime.textContent = `Data e Hora: ${date} às ${time}`;
+
+            modal.style.display = 'block';
+
+            confirmButton.onclick = function() {
+                document.getElementById('appointment-datetime').value = dateTime;
+                modal.style.display = 'none';
+                form.submit();
+            };
+
+            cancelButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        } else {
+            alert('Por favor, selecione o serviço, barbeiro, data e horário.');
+        }
+    });
+});
+
     </script>
 </body>
 </html>

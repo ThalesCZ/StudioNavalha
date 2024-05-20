@@ -462,3 +462,86 @@ body {
   color: #ffffff;
   pointer-events: none; 
 }
+
+/* Estilos para o modal de confirmação */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal h2 {
+  margin-top: 0;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 700;
+}
+
+.modal p {
+  font-family: 'Kanit', sans-serif;
+  font-size: 18px;
+  color: #333;
+  margin: 10px 0;
+}
+
+#confirm-button, #cancel-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  font-size: 16px;
+}
+
+#cancel-button {
+  background-color: #f44336; /* Red */
+}
+
+#confirm-button:hover, #cancel-button:hover {
+  opacity: 0.9;
+}
+
+
+
+
