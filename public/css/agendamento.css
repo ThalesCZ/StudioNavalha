@@ -429,8 +429,6 @@ body {
   width: 100%;
 }
 
-
-
 @media (max-width: 768px) {
   .menu-button {
       display: block; 
@@ -463,7 +461,6 @@ body {
   pointer-events: none; 
 }
 
-/* Estilos para o modal de confirmação */
 .modal {
   display: none;
   position: fixed;
@@ -541,7 +538,5 @@ body {
 #confirm-button:hover, #cancel-button:hover {
   opacity: 0.9;
 }
-
-
 
 
