@@ -333,11 +333,58 @@ app.post('/agendar', async (req, res) => {
             dataHoraFim,
             clienteUid: req.cookies['uid']
         });
-        res.send('Agendamento confirmado!');
+        res.redirect('/meus_agendamentos');
     } else {
         res.send('Este horário já está ocupado.');
     }
 });
+
+app.get('/meus_agendamentos', authenticateUser, async (req, res) => {
+    try {
+        const uid = req.cookies['uid'];
+        const agendamentos = await Agendamentos.findAll({
+            where: { clienteUid: uid },
+            include: [
+                { model: Barbeiros },
+                { model: Servicos }
+            ],
+            order: [
+                ['dataHoraInicio', 'DESC'],
+            ]
+        });
+
+        res.render('meus_agendamentos', { 
+            userLogged: true, 
+            agendamentos 
+        });
+    } catch (error) {
+        console.error('Erro ao carregar os agendamentos do cliente:', error);
+        res.status(500).send('Erro ao carregar os agendamentos');
+    }
+});
+
+app.delete('/excluir-agendamento/:id', authenticateUser, async (req, res) => {
+    try {
+        const agendamentoId = req.params.id;
+        const agendamento = await Agendamentos.findByPk(agendamentoId);
+
+        if (!agendamento) {
+            return res.status(404).send('Agendamento não encontrado.');
+        }
+
+        const dataHoraInicio = new Date(agendamento.dataHoraInicio);
+        if (dataHoraInicio < new Date()) {
+            return res.status(403).send('Não é possível excluir agendamentos passados.');
+        }
+
+        await agendamento.destroy();
+        res.status(200).send('Agendamento excluído com sucesso.');
+    } catch (error) {
+        console.error('Erro ao excluir agendamento:', error);
+        res.status(500).send('Erro ao excluir agendamento.');
+    }
+});
+
 
 app.use((req, res) => {
     res.redirect('/');

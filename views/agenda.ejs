@@ -17,13 +17,13 @@
         <div class="menu-content">
             <button class="return" id="back-to-home" style="cursor: pointer;">VOLTAR PARA O INICIO</button>
             <img class="logo" src="images/logo.png" alt="Logo">
-            <button class="myagend" style="cursor: pointer;">MEUS AGENDAMENTOS</button>
+            <button class="myagend" onclick="window.location.href='/meus_agendamentos'" style="cursor: pointer;">MEUS AGENDAMENTOS</button>
         </div>
     </div>
     
     <div class="container">
         <div class="left-panel">
-            <h1>Agende seu Horário Agora</h1>
+            <h1 class="md" style="align-self: center; margin-bottom: 25px;">Agende seu Horário Agora</h1>
             <h2 style="margin-top: 0; margin-bottom: 0;">Serviços Disponíveis</h2>
             <ul>
                 <% servicos.forEach(servico => { %>
@@ -341,5 +341,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     </script>   
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmButton = document.getElementById('confirm-button');
+
+        confirmButton.addEventListener('click', function() {
+            alert('Agendamento Confirmado!');
+        });
+    });
+</script>
+
 </body>
 </html>

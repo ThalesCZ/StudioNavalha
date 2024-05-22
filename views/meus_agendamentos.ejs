@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agendamento Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:wght@200;400;700&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/agendamento.css">
+    <link href="https://cdn.jsdelivr.net/npm/pg-calendar@1.4.31/dist/css/pignose.calendar.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+
+    <style>
+        .table-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px 0;
+            background-color: var(--white-color);
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: var(--border-radius-small);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+
+        .delete-btn {
+            background-color: #ff4d4d; /* Vermelho */
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+        background-color: #e60000; /* Vermelho mais escuro */
+        }
+
+        .delete-btn:disabled {
+        background-color: #cccccc; /* Cinza */
+        cursor: not-allowed;
+        }
+
+        button {
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="topo">
+        <button id="menu-button" class="menu-button">☰</button> 
+        <div class="menu-content">
+            <button class="return" onclick="window.location.href='/'">VOLTAR PARA O INICIO</button>
+            <img class="logo" src="images/logo.png" alt="Logo">
+            <button class="myagend" onclick="window.location.href='/agenda'">NOVO AGENDAMENTO</button>
+        </div>
+    </div>
+    <h1 class="mt-5" style="margin-bottom: 0; align-self: center;">Meus Agendamentos</h1>
+    <div class="table-container">
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Barbeiro</th>
+                    <th>Data</th>
+                    <th>Hora</th>   
+                    <th>Serviço</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% agendamentos.forEach(agendamento => { %>
+                    <tr>
+                        <td><%= agendamento.Barbeiro.nome %></td>
+                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleDateString() %></td>
+                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td>
+                        <td><%= agendamento.Servico.descricao %></td>
+                        <td>
+                            <% if (new Date(agendamento.dataHoraInicio) > new Date()) { %>
+                                <button class="delete-btn button1" data-id="<%= agendamento.id %>">Excluir</button>
+                            <% } else { %>
+                                <button class="delete-btn button1" data-id="<%= agendamento.id %>" disabled>Excluir</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const id = event.target.getAttribute('data-id');
+                if (confirm('Tem certeza de que deseja excluir este agendamento?')) {
+                    try {
+                        const response = await fetch(`/excluir-agendamento/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (response.ok) {
+                            alert('Agendamento excluído com sucesso.');
+                            window.location.reload();
+                        } else {
+                            alert('Erro ao excluir o agendamento.');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir o agendamento:', error);
+                        alert('Erro ao excluir o agendamento.');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
