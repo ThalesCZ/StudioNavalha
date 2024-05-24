@@ -66,6 +66,3 @@ module.exports.insertUserData = (userData) => {
     email: userData.email,
   });
 };
-
-
-return module.exports
