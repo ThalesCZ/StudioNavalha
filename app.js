@@ -110,7 +110,7 @@ app.get('/registro', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.render('login', { signUpError: null, loginError: null });
+    res.render('login', { signUpSuccess: null, loginError: null });
 });
 
 app.get('/logout', (req, res) => {
@@ -203,7 +203,7 @@ app.post('/createuser', async (req, res) => {
     
         await criarCliente(username, email, uid);
     
-        res.redirect('/login');
+        res.render('login', { signUpSuccess: true, loginError: null });
       } catch (error) {
         console.error('Erro ao registrar cliente:', error);
     
@@ -249,7 +249,7 @@ app.post('/login', async (req, res) => {
         if (error.message === 'UID não encontrado') {
             errorMessage = 'Erro interno. Por favor, tente novamente.';
         }
-        res.render('login', { loginError: errorMessage, signUpError: null });
+        res.render('login', { signUpSuccess: null, loginError: errorMessage });
     }
 });
 

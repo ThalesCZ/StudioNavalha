@@ -26,8 +26,14 @@
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
+    "firebase-mock": "^2.2.4",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
     "supertest": "^7.0.0"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./tests/setupTests.js"
+    ]
   }
 }

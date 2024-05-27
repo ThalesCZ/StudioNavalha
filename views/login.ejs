@@ -24,6 +24,9 @@
         
         <div class="form-group">
 			<div style="display: flex;flex-direction: column; align-items: center;">
+				<% if (signUpSuccess) { %>
+					<p class="error-message" style="color: green;">Conta criada com sucesso!</p>
+				<% } %>
 			<% if (loginError) { %>
 				<p class="error-message" style="color: rgb(241, 37, 37);"><%= loginError %></p>
 			<% } %>
