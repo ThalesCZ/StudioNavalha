@@ -1,10 +1,8 @@
-const { MockFirebase, MockFirebaseSdk } = require('firebase-mock');
+const mockFirebase = require('firebase-mock');
+const mockAuth = new mockFirebase.MockFirebase();
+const mockDatabase = new mockFirebase.MockFirebase();
 
-// Configurando mocks para auth e database
-const mockAuth = new MockFirebase();
-const mockDatabase = new MockFirebase();
-
-const mocksdk = new MockFirebaseSdk(
+const mocksdk = new mockFirebase.MockFirebaseSdk(
   (path) => {
     return path ? mockDatabase.child(path) : mockDatabase;
   },
@@ -13,15 +11,18 @@ const mocksdk = new MockFirebaseSdk(
   }
 );
 
-// Habilita o autoFlush para simular automaticamente a resolução das operações assíncronas
-mockAuth.autoFlush();
-mockDatabase.autoFlush();
+mocksdk.auth().autoFlush(); // Simula operações assíncronas de auth
 
-// Mock do Firebase usado no seu projeto
 jest.mock('firebase', () => {
-  return {
-    initializeApp: () => mocksdk,
-    auth: () => mockAuth,
-    database: () => mockDatabase,
-  };
+  return mocksdk;
+});
+
+// Adicionar um usuário mock para retornar ao chamar createUserWithEmailAndPassword
+mockAuth.createUserWithEmailAndPassword = jest.fn((email, password) => {
+  return Promise.resolve({
+    user: {
+      email,
+      uid: '12345'
+    }
+  });
 });
