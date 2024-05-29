@@ -42,20 +42,19 @@
             background-color: #f8f9fa;
         }
 
-
         .delete-btn {
-            background-color: #ff4d4d; /* Vermelho */
+            background-color: #ff4d4d;
             color: white;
             transition: background-color 0.3s ease;
         }
 
         .delete-btn:hover {
-        background-color: #e60000; /* Vermelho mais escuro */
+            background-color: #e60000;
         }
 
         .delete-btn:disabled {
-        background-color: #cccccc; /* Cinza */
-        cursor: not-allowed;
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
 
         button {
@@ -94,8 +93,8 @@
                 <% agendamentos.forEach(agendamento => { %>
                     <tr>
                         <td><%= agendamento.Barbeiro.nome %></td>
-                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleDateString() %></td>
-                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td>
+                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleDateString('pt-BR') %></td>
+                        <td><%= new Date(agendamento.dataHoraInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) %></td>
                         <td><%= agendamento.Servico.descricao %></td>
                         <td>
                             <% if (new Date(agendamento.dataHoraInicio) > new Date()) { %>
