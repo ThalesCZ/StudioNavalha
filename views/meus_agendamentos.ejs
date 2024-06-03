@@ -132,5 +132,15 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('menu-button');
+            const topo = document.querySelector('.topo');
+    
+            menuButton.addEventListener('click', function() {
+                topo.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 </html>
