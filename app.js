@@ -14,6 +14,9 @@ const { Op } = require('sequelize');
 const app = express();
 const publicDir = require('path').join(__dirname, '/public');
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 //banco
 const db = require('./db.js');
 const { Clientes, Barbeiros, Servicos, Agendamentos, HorariosDisponiveis } = require('./db');
@@ -317,46 +320,55 @@ app.post('/delete-servico', authenticateAdmin, async (req, res) => {
 });
 
 app.post('/agendar', async (req, res) => {
-    const { barbeiroId, servicoId, dataHora } = req.body;
-    const servico = await Servicos.findByPk(servicoId);
-    
-    const dataHoraInicio = new Date(dataHora);
+    try {
+        const { barbeiroId, servicoId, dataHora } = req.body;
+        const servico = await Servicos.findByPk(servicoId);
 
-    const dataHoraFim = new Date(dataHoraInicio.getTime() + servico.duracao * 60000);
-
-    const conflito = await Agendamentos.findOne({
-        where: {
-            barbeiroId: barbeiroId,
-            [Op.or]: [
-                {
-                    dataHoraInicio: {
-                        [Op.lt]: dataHoraFim,
-                        [Op.gte]: dataHoraInicio
-                    }
-                },
-                {
-                    dataHoraFim: {
-                        [Op.gt]: dataHoraInicio,
-                        [Op.lte]: dataHoraFim
-                    }
-                }
-            ]
+        if (!servico) {
+            return res.status(404).send('Serviço não encontrado.');
         }
-    });
 
-    if (!conflito) {
-        await Agendamentos.create({
-            barbeiroId,
-            servicoId,
-            dataHoraInicio,
-            dataHoraFim,
-            clienteUid: req.cookies['uid']
+        const dataHoraInicio = new Date(dataHora);
+        const dataHoraFim = new Date(dataHoraInicio.getTime() + servico.duracao * 60000);
+
+        const conflito = await Agendamentos.findOne({
+            where: {
+                barbeiroId: barbeiroId,
+                [Op.or]: [
+                    {
+                        dataHoraInicio: {
+                            [Op.lt]: dataHoraFim,
+                            [Op.gte]: dataHoraInicio
+                        }
+                    },
+                    {
+                        dataHoraFim: {
+                            [Op.gt]: dataHoraInicio,
+                            [Op.lte]: dataHoraFim
+                        }
+                    }
+                ]
+            }
         });
-        res.redirect('/meus_agendamentos');
-    } else {
-        res.send('Este horário já está ocupado.');
+
+        if (!conflito) {
+            await Agendamentos.create({
+                barbeiroId,
+                servicoId,
+                dataHoraInicio,
+                dataHoraFim,
+                clienteUid: req.cookies['uid']
+            });
+            res.redirect('/meus_agendamentos');
+        } else {
+            res.status(409).send('Este horário já está ocupado.');
+        }
+    } catch (error) {
+        console.error('Erro ao agendar:', error);
+        res.status(500).send('Erro ao agendar.');
     }
 });
+
 
 app.get('/meus_agendamentos', authenticateUser, async (req, res) => {
     try {

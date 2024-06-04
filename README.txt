@@ -6,4 +6,7 @@ Para execução do projeto sera necessàrio ter o NodeJS instalado.
 
 4.  Execute o comando "npm test" no terminal para a realização dos testes unitários.
 
-3.Projeto com deploy no onrender = https://studionavalha.onrender.com/
+5. Para entrar no painel administrativo, primeiro deve ser criada uma conta admin no proprio site, a qual o email será o escolhido no arquivo .env e a senha
+de sua preferência, após isso basta logar no proprio site com as credênciais utilizadas.
+
+6.Projeto com deploy no onrender = https://studionavalha.onrender.com/
