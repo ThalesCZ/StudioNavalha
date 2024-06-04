@@ -43,8 +43,6 @@ module.exports.SignInWithEmailAndPassword = (email, password) => {
     });
 }
 
-
-
 module.exports.GetData = () => {
   let data = []
   return firebase.database().ref('users').once('value')

@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Conexâo com o banco
+
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     }
 });
 
-// Definição da tabela Clientes
+
 const Clientes = sequelize.define('Clientes', {
     uid: {
         type: DataTypes.STRING,
@@ -30,7 +30,7 @@ const Clientes = sequelize.define('Clientes', {
     }
 });
 
-// Definição da tabela Barbeiros
+
 const Barbeiros = sequelize.define('Barbeiros', {
     nome: {
         type: DataTypes.STRING,
@@ -38,7 +38,7 @@ const Barbeiros = sequelize.define('Barbeiros', {
     }
 });
 
-// Definição da tabela Servicos
+
 const Servicos = sequelize.define('Servicos', {
     descricao: {
         type: DataTypes.STRING,
@@ -55,7 +55,7 @@ const Servicos = sequelize.define('Servicos', {
 });
 
 
-// Definição da tabela Agendamentos
+
 const Agendamentos = sequelize.define('Agendamentos', {
     barbeiroId: {
         type: DataTypes.INTEGER,
@@ -85,7 +85,7 @@ const Agendamentos = sequelize.define('Agendamentos', {
     }
 });
 
-// Definição da tabela HorariosDisponiveis
+
 const HorariosDisponiveis = sequelize.define('HorariosDisponiveis', {
     horario: {
         type: DataTypes.TIME,
@@ -94,12 +94,12 @@ const HorariosDisponiveis = sequelize.define('HorariosDisponiveis', {
 });
 
 Agendamentos.belongsTo(Servicos, { foreignKey: 'servicoId' });
-// Função para popular a tabela HorariosDisponiveis
+
 async function popularHorariosDisponiveis() {
     try {
-        const startHour = 9; // Horário inicial (9h)
-        const endHour = 19; // Horário final (19h)
-        const interval = 30; // Intervalo em minutos
+        const startHour = 9; 
+        const endHour = 19; 
+        const interval = 30; 
 
         const horarios = [];
         for (let hour = startHour; hour < endHour; hour++) {
@@ -141,7 +141,7 @@ async function syncDB() {
     }
 }
 
-// Exportação
+
 module.exports = {
     Clientes,
     Barbeiros,

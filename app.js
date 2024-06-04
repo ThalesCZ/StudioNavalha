@@ -49,7 +49,7 @@ const authenticateAdmin = (req, res, next) => {
     if (process.env.NODE_ENV === 'test') {
         req.cookies['userLogged'] = 'true';
         req.cookies['uid'] = 'test-admin-uid';
-        req.isAdmin = true; // Adicione uma flag para simular o administrador
+        req.isAdmin = true; 
         return next();
     }
 
@@ -155,7 +155,7 @@ app.get('/admin', authenticateAdmin, async (req, res) => {
             servicos, 
             barbeiros, 
             agendamentos, 
-            selectedBarbeiroId: parseInt(barbeiroId, 10), // Transforma em int para ajeitar o select
+            selectedBarbeiroId: parseInt(barbeiroId, 10), 
             message, 
             errorMessage 
         });
@@ -290,6 +290,7 @@ app.post('/delete-barbeiro', authenticateAdmin, async (req, res) => {
     } catch (error) {
         console.error('Erro ao excluir barbeiro:', error);
         res.redirect(`/admin?errorMessage=Exclua todos os agendamentos relacionados a este serviço antes!`);
+        res.status(500).send('Erro ao excluir barbeiro');
     }
 });
 
@@ -320,7 +321,7 @@ app.post('/agendar', async (req, res) => {
     const servico = await Servicos.findByPk(servicoId);
     
     const dataHoraInicio = new Date(dataHora);
-    // Configura dataHoraFim usando apenas a duração do serviço
+
     const dataHoraFim = new Date(dataHoraInicio.getTime() + servico.duracao * 60000);
 
     const conflito = await Agendamentos.findOne({
