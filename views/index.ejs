@@ -71,14 +71,20 @@
                         <li class="nav-item" style="margin-top: 10px;">
                             <div class="dropdown">
                                 <span class="dropbtn">
-                                    <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                                    <% if (userLogged) { %>
+                                        <i class="bi bi-gear-fill" style="font-size: 30px;"></i>
+                                    <% } else { %>
+                                        <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                                    <% } %>
                                 </span>
                                 <div class="dropdown-content">
                                     <% if (userLogged) { %>
                                         <a href="/logout" class="drop3">Sair</a>
-                                        <% } else { %>
-                                            <a href="/login" class="drop3">Logar</a>
-                                            <% } %>
+                                    <% } else { %>
+                                        <a href="/login" class="drop3">Logar</a>
+                                    <% } %>
+                                </div>
+                                
                                 </div>
                             </div>
                         </li>
@@ -129,7 +135,7 @@
                                 class="custom-block-bg-overlay-image img-fluid" alt="">
 
                             <div class="team-info d-flex align-items-center flex-wrap">
-                                <p class="mb-0">Mr.Bigode</p>
+                                <p class="mb-0">João</p>
 
                                 <ul class="social-icon ms-auto">
                                     <li class="social-icon-item">
@@ -150,7 +156,7 @@
                                     class="custom-block-bg-overlay-image img-fluid" alt="">
 
                                 <div class="team-info d-flex align-items-center flex-wrap">
-                                    <p class="mb-0">Mr.Bigode</p>
+                                    <p class="mb-0">Pedro</p>
 
                                     <ul class="social-icon ms-auto">
                                         <li class="social-icon-item">

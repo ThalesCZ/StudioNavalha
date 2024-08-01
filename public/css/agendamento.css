@@ -362,7 +362,6 @@ body {
   font-weight: 400;
   font-style: normal;
   border-radius: 15px;
-  padding: 15px;
   transition: transform 1s;
   transform: translateX(0) scale(1);
 }
@@ -385,7 +384,6 @@ body {
   font-weight: 400;
   font-style: normal;
   border-radius: 15px;
-  padding: 15px;
   transition: transform 1s;
   transform: translateX(0) scale(1);
 }
@@ -400,13 +398,15 @@ body {
 
 @media (max-width: 768px) {
 
-
   .myagend, .return {
-    width: 50%;  
-    height: 75px;
+    width: 95px;  
+    height: 25px;
+    font-size: 8px;
+   
   }
   .logo{
     width: 100%;
+    margin: 5px;
   }
   .topo{
   width: 100%;  
@@ -429,19 +429,27 @@ body {
   width: 100%;
 }
 
+.logo_and_menu{
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  justify-items: center;
+}
+
 @media (max-width: 768px) {
   .menu-button {
       display: block; 
   }
 
   .menu-content {
-      display: none; 
+      display:contents; 
       flex-direction: column;
       width: 100%;
   }
 
   .topo.active .menu-content {
-      display: flex; 
+      display: contents; 
   }
 }
 
