@@ -266,7 +266,7 @@ strong {
 
 #sidebarMenu .nav-link.active, 
 #sidebarMenu .nav-link:hover {
-  color: var(--white-color);
+  color: white;
 }
 
 .navbar-toggler {
@@ -998,38 +998,52 @@ color: #fff;
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  transition: opacity 0.3s ease;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 500px;
+  height: auto;
+  background-color: #fff;
+  border: 1px solid #888;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content {
-  background-color: #fff;
-  margin: 10% auto;
   padding: 20px;
-  border: 1px solid #888;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s;
 }
 
-.modal h2 {
-  margin-top: 0;
-  font-family: 'Kanit', sans-serif;
-  font-weight: 700;
+.blur .sidebar,
+.blur .hero-section,
+.blur .about-section,
+.blur .featured-section,
+.blur .services-section,
+.blur .booking-section,
+.blur .price-list-section,
+.blur .contact-section,
+.blur .site-footer {
+  filter: blur(2px);
+  pointer-events: none;
 }
 
-.modal p {
-  font-family: 'Kanit', sans-serif;
-  font-size: 18px;
-  color: #333;
-  margin: 10px 0;
+.blur .modal {
+  filter: none;
+  pointer-events: auto;
 }
+
+.service-description {
+  color: #000000;
+  margin: 15px 0;
+}
+.title-description{
+  color: #000;
+}
+
+.close-modal{
+  background-color: #000;
+  color:#fff;
+}
+

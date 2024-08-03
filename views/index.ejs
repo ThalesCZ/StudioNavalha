@@ -197,58 +197,88 @@
                 <section class="services-section section-padding">
                     <div class="container">
                         <div class="row">
-
+                
                             <div class="col-lg-12 col-12" id="section_3">
                                 <h2 class="mb-5 cor-titulo">Alguns dos nossos <span class="highlight">Serviços</span></h2>
                             </div>
-
+                
                             <div class="col-lg-6 col-12 mb-4">
-                                <div class="services-thumb services_text">
+                                <div class="services-thumb services_text" data-service="corte">
                                     <img src="images/services/barbeiro01.png" class="services-image img-fluid" alt="">
-
+                
                                     <div class="services-info d-flex align-items-end">
-                                        <h4 class="mb-0 ">Corte</h4>
-
+                                        <h4 class="mb-0">Corte</h4>
                                     </div>
                                 </div>
                             </div>
-
+                
                             <div class="col-lg-6 col-12 mb-4">
-                                <div class="services-thumb services_text">
+                                <div class="services-thumb services_text" data-service="hidratacao">
                                     <img src="images/services/barbeiro02.png" class="services-image img-fluid" alt="">
-
-                                    <div class="services-info d-flex align-items-end ">
+                
+                                    <div class="services-info d-flex align-items-end">
                                         <h4 class="mb-0">Hidratação</h4>
-
                                     </div>
                                 </div>
                             </div>
-
+                
                             <div class="col-lg-6 col-12 mb-4 mb-lg-0">
-                                <div class="services-thumb services_text">
+                                <div class="services-thumb services_text" data-service="barba">
                                     <img src="images/services/barbeiro03.png" class="services-image img-fluid" alt="">
-
+                
                                     <div class="services-info d-flex align-items-end">
                                         <h4 class="mb-0">Barba</h4>
-
                                     </div>
                                 </div>
                             </div>
-
+                
                             <div class="col-lg-6 col-12">
-                                <div class="services-thumb services_text">
+                                <div class="services-thumb services_text" data-service="infantil">
                                     <img src="images/services/barbeiro04.png" class="services-image img-fluid" alt="">
-
+                
                                     <div class="services-info d-flex align-items-end">
                                         <h4 class="mb-0">Infantil</h4>
-
                                     </div>
                                 </div>
                             </div>
-
+                
                         </div>
                     </div>
                 </section>
+                
+                <!-- Modals -->
+                <div id="modal-corte" class="modal">
+                    <div class="modal-content">
+                        <h2 class="title-description">Corte</h2>
+                        <p class="service-description">Nosso serviço de corte oferece um acabamento impecável e personalizado, adaptado ao seu estilo e preferência. Nossos barbeiros experientes utilizam técnicas modernas e tradicionais para garantir que você saia do Studio Navalha com um corte que realça a sua personalidade e confiança. De cortes clássicos a estilos contemporâneos, temos o que você precisa.</p>
+                        <button id="close-corte" class="close-modal">Fechar</button>
+                    </div>
+                </div>
+
+                <div id="modal-hidratacao" class="modal">
+                    <div class="modal-content">
+                        <h2 class="title-description">Hidratação</h2>
+                        <p class="service-description">Dê aos seus cabelos o tratamento que eles merecem com nossos serviços de hidratação profunda. Utilizamos produtos de alta qualidade que nutrem e revitalizam seus fios, deixando-os macios, brilhantes e saudáveis. Ideal para todos os tipos de cabelo, nossa hidratação é especialmente formulada para combater os danos causados pelo sol, poluição e uso de produtos químicos.</p>
+                        <button id="close-hidratacao" class="close-modal">Fechar</button>
+                    </div>
+                </div>
+
+                <div id="modal-barba" class="modal">
+                    <div class="modal-content">
+                        <h2 class="title-description">Barba</h2>
+                        <p class="service-description">Mantenha sua barba impecável com nosso serviço especializado de cuidados com a barba. Nossos barbeiros são mestres em criar linhas nítidas e simétricas, garantindo que sua barba esteja sempre no seu melhor. Oferecemos desde a modelagem até o tratamento com óleos e bálsamos especiais que hidratam a pele e o pelo, proporcionando uma aparência elegante e bem cuidada.</p>
+                        <button id="close-barba" class="close-modal">Fechar</button>
+                    </div>
+                </div>
+
+                <div id="modal-infantil" class="modal">
+                    <div class="modal-content">
+                        <h2 class="title-description">Infantil</h2>
+                        <p class="service-description">No Studio Navalha, sabemos como é importante que os pequenos também tenham um visual bacana. Nosso serviço infantil é feito com muito carinho e paciência, garantindo que as crianças se sintam confortáveis e felizes durante o corte. Nossos barbeiros são especializados em atender o público infantil, criando cortes modernos e estilosos que deixam os pais e os pequenos satisfeitos.</p>
+                        <button id="close-infantil" class="close-modal">Fechar</button>
+                    </div>
+                </div>
+
 
                 <section class="booking-section section-padding" id="section_4">
                     <div class="container">
@@ -282,58 +312,45 @@
                                 <div class="price-list-thumb-wrap">
                                     <div class="mb-4">
                                         <h2 class="mb-2">Preços</h2>
-
                                         <strong>A partir de R$20.00</strong>
                                     </div>
-
                                     <div class="price-list-thumb">
-                                        <h6 class="d-flex">
-                                            Cabelo
+                                        <h6 class="d-flex justify-content-between align-items-center">
+                                            <span>Cabelo</span>
                                             <span class="price-list-thumb-divider"></span>
-
                                             <strong>R$40,00</strong>
                                         </h6>
                                     </div>
-
                                     <div class="price-list-thumb">
-                                        <h6 class="d-flex">
-                                            Barba
+                                        <h6 class="d-flex justify-content-between align-items-center">
+                                            <span>Barba</span>
                                             <span class="price-list-thumb-divider"></span>
-
                                             <strong>R$35,00</strong>
                                         </h6>
                                     </div>
-
                                     <div class="price-list-thumb">
-                                        <h6 class="d-flex">
-                                            Cabelo e barba
+                                        <h6 class="d-flex justify-content-between align-items-center">
+                                            <span>Infantil</span>
                                             <span class="price-list-thumb-divider"></span>
-
-                                            <strong>R$65,00</strong>
+                                            <strong>R$45,00</strong>
                                         </h6>
                                     </div>
-
                                     <div class="price-list-thumb">
-                                        <h6 class="d-flex">
-                                            Hidratação
+                                        <h6 class="d-flex justify-content-between align-items-center">
+                                            <span>Hidratação</span>
                                             <span class="price-list-thumb-divider"></span>
-
                                             <strong>R$30,00</strong>
                                         </h6>
                                     </div>
-
                                 </div>
                             </div>
-
-                            <div
-                                class="col-lg-4 col-12 custom-block-bg-overlay-wrap mt-5 mb-5 mb-lg-0 mt-lg-0 pt-3 pt-lg-0">
-                                <img src="images/barbearia_por_fora.png" class="custom-block-bg-overlay-image img-fluid"
-                                    alt="">
+                            <div class="col-lg-4 col-12 custom-block-bg-overlay-wrap mt-5 mb-5 mb-lg-0 mt-lg-0 pt-3 pt-lg-0">
+                                <img src="images/barbearia_por_fora.png" class="custom-block-bg-overlay-image img-fluid" alt="">
                             </div>
-
                         </div>
                     </div>
                 </section>
+                
 
 
                 <section class="contact-section" id="section_6">
@@ -454,6 +471,59 @@
             <script src="js/bootstrap.min.js"></script>
             <script src="js/click-scroll.js"></script>
             <script src="js/custom.js"></script>
+            
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const serviceElements = document.querySelectorAll('.services-thumb');
+        const modals = {
+            corte: document.getElementById('modal-corte'),
+            hidratacao: document.getElementById('modal-hidratacao'),
+            barba: document.getElementById('modal-barba'),
+            infantil: document.getElementById('modal-infantil')
+        };
+        const body = document.body;
+        const navbarToggler = document.querySelector('.navbar-toggler.d-md-none');
 
+        serviceElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const service = this.getAttribute('data-service');
+                const modal = modals[service];
+                if (modal) {
+                    modal.style.display = 'block';
+                    body.classList.add('blur');
+                    if (navbarToggler) {
+                        navbarToggler.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                modal.style.display = 'none';
+                body.classList.remove('blur');
+                if (navbarToggler) {
+                    navbarToggler.style.display = 'block';
+                }
+            });
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                body.classList.remove('blur');
+                if (navbarToggler) {
+                    navbarToggler.style.display = 'block';
+                }
+            }
+        });
+    });
+
+
+</script>
+  
 </html>
